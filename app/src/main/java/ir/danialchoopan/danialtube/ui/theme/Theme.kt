@@ -37,7 +37,7 @@ fun DanialTubeTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Compos
 
     MaterialTheme(
         colors = colors,
-        typography = Typography,
+        typography = typography_font_vazir,
         shapes = Shapes,
         content = content
     )

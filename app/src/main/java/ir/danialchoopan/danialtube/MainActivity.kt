@@ -16,8 +16,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import ir.danialchoopan.danialtube.screen.HomePageScreen
 import ir.danialchoopan.danialtube.ui.theme.DanialTubeTheme
@@ -29,9 +31,19 @@ class MainActivity : ComponentActivity() {
         setContent {
             DanialTubeTheme {
                 //app route
-                HomePageScreen()
+                RightToLeftLayout {
+                    HomePageScreen()
+                }
                 //  splash screen -> homepage
             }
         }
+    }
+}
+
+
+@Composable
+fun RightToLeftLayout(content: @Composable () -> Unit) {
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        content()
     }
 }
