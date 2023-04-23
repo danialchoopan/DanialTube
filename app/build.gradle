@@ -65,7 +65,9 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.4.1'
 
     //volley
+    implementation 'com.android.volley:volley:1.2.1'
 
     //Gson
+    implementation 'com.google.code.gson:gson:2.10.1'
 
 }

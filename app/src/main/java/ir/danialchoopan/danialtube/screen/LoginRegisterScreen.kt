@@ -1,5 +1,7 @@
 package ir.danialchoopan.danialtube.screen
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardActions
@@ -14,27 +16,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ir.danialchoopan.danialtube.viewmodels.HomeScreenViewModel
 import kotlin.math.log
 
 
 @Composable
-fun LoginRegisterUserScreenSwitch() {
+fun LoginRegisterUserScreenSwitch(m_context: Context, homeScreenViewModel: HomeScreenViewModel) {
     var login_Screen_switch by remember {
         mutableStateOf(true)
     }
     if (login_Screen_switch) {
-        LoginUserProfileScreen { login ->
+        LoginUserProfileScreen(m_context) { login ->
             login_Screen_switch = login
         }
     } else {
-        RegisterUserProfileScreen { login ->
+        RegisterUserProfileScreen(m_context, homeScreenViewModel) { login ->
             login_Screen_switch = login
         }
     }
 }
 
 @Composable
-fun LoginUserProfileScreen(onButtonLoginSwitchClick: (login: Boolean) -> Unit) {
+fun LoginUserProfileScreen(m_context: Context, onButtonLoginSwitchClick: (login: Boolean) -> Unit) {
 
     Column(
         modifier = Modifier
@@ -95,7 +98,27 @@ fun LoginUserProfileScreen(onButtonLoginSwitchClick: (login: Boolean) -> Unit) {
 
 
 @Composable
-fun RegisterUserProfileScreen(onButtonLoginSwitchClick: (login: Boolean) -> Unit) {
+fun RegisterUserProfileScreen(
+    m_context: Context, homeScreenViewModel: HomeScreenViewModel,
+    onButtonLoginSwitchClick: (login: Boolean) -> Unit
+) {
+
+    var nameRegisterTextBox by remember {
+        mutableStateOf("")
+    }
+    var phoneRegisterTextBox by remember {
+        mutableStateOf("")
+    }
+    var emailRegisterTextBox by remember {
+        mutableStateOf("")
+    }
+    var passwordRegisterTextBox by remember {
+        mutableStateOf("")
+    }
+    var rePasswordRegisterTextBox by remember {
+        mutableStateOf("")
+    }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -105,10 +128,12 @@ fun RegisterUserProfileScreen(onButtonLoginSwitchClick: (login: Boolean) -> Unit
     ) {
         Text(text = "نام نویسی", fontSize = 18.sp)
         OutlinedTextField(
-            value = "",
+            value = nameRegisterTextBox,
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { },
+            onValueChange = {
+                nameRegisterTextBox = it
+            },
             label = { Text(text = "نام نمایشی") },
             isError = false,
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -120,10 +145,12 @@ fun RegisterUserProfileScreen(onButtonLoginSwitchClick: (login: Boolean) -> Unit
         )
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
-            value = "",
+            value = emailRegisterTextBox,
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { },
+            onValueChange = {
+                emailRegisterTextBox = it
+            },
             label = { Text(text = "پست الکترونیک") },
             isError = false,
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -135,10 +162,12 @@ fun RegisterUserProfileScreen(onButtonLoginSwitchClick: (login: Boolean) -> Unit
         )
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
-            value = "",
+            value = phoneRegisterTextBox,
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { },
+            onValueChange = {
+                phoneRegisterTextBox = it
+            },
             label = { Text(text = "شماره همراه") },
             isError = false,
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -150,10 +179,12 @@ fun RegisterUserProfileScreen(onButtonLoginSwitchClick: (login: Boolean) -> Unit
         )
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
-            value = "",
+            value = passwordRegisterTextBox,
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { },
+            onValueChange = {
+                passwordRegisterTextBox = it
+            },
             label = { Text(text = "رمزعبور") },
             isError = false,
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -165,10 +196,12 @@ fun RegisterUserProfileScreen(onButtonLoginSwitchClick: (login: Boolean) -> Unit
         )
         Spacer(modifier = Modifier.height(5.dp))
         OutlinedTextField(
-            value = "",
+            value = rePasswordRegisterTextBox,
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { },
+            onValueChange = {
+                rePasswordRegisterTextBox = it
+            },
             label = { Text(text = "تکرار رمزعبور") },
             isError = false,
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -181,7 +214,40 @@ fun RegisterUserProfileScreen(onButtonLoginSwitchClick: (login: Boolean) -> Unit
 
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedButton(
-            modifier = Modifier.fillMaxWidth(), onClick = { }) {
+            modifier = Modifier.fillMaxWidth(), onClick = {
+                if (nameRegisterTextBox.isNotEmpty() &&
+                    emailRegisterTextBox.isNotEmpty() &&
+                    phoneRegisterTextBox.isNotEmpty() &&
+                    passwordRegisterTextBox.isNotEmpty() &&
+                    rePasswordRegisterTextBox.isNotEmpty()
+                ) {
+                    if (passwordRegisterTextBox == rePasswordRegisterTextBox) {
+                        homeScreenViewModel.userLoginRequest(
+                            m_context,
+                            nameRegisterTextBox,
+                            emailRegisterTextBox,
+                            phoneRegisterTextBox,
+                            passwordRegisterTextBox
+                        ) {
+                            if (it) {
+                                Toast.makeText(m_context, "ture", Toast.LENGTH_SHORT).show()
+                            } else {
+                                Toast.makeText(m_context, "false", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        //clear text boxs
+                        nameRegisterTextBox = ""
+                        emailRegisterTextBox = ""
+                        phoneRegisterTextBox = ""
+                        passwordRegisterTextBox = ""
+                        rePasswordRegisterTextBox = ""
+                    } else {
+                        Toast.makeText(m_context, "not match passwords", Toast.LENGTH_SHORT).show()
+                    }
+                }else{
+                    Toast.makeText(m_context, "empty inputs ", Toast.LENGTH_SHORT).show()
+                }
+            }) {
             Text(text = "نام نویسی", modifier = Modifier.padding(10.dp))
         }
         Spacer(modifier = Modifier.height(15.dp))

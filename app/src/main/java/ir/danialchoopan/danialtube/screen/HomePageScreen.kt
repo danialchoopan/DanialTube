@@ -108,7 +108,7 @@ private fun UserAuthScreenLoginRegisterProfile(
     }
     Column(Modifier.fillMaxSize()) {
         if (is_login) {
-            LoginRegisterUserScreenSwitch()
+            LoginRegisterUserScreenSwitch(m_context,homeScreenViewModel)
         }//login - register
         else {
             UserProfileScreen()
