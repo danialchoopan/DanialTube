@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import ir.danialchoopan.danialtube.data.api.model.RegisterUserResponse
 import ir.danialchoopan.danialtube.data.api.requests.UserAuthRequest
 
 class HomeScreenViewModel() : ViewModel() {
@@ -30,32 +31,33 @@ class HomeScreenViewModel() : ViewModel() {
     }
 
 
-    fun userLoginRequest(
+    fun userRegisterRequest(
         m_context: Context,
         name: String,
         email: String,
         phone: String,
         password: String,
-        result:(success:Boolean)->Unit
+        result: (success: Boolean) -> Unit
     ) {
         UserAuthRequest(m_context)
             .registerUser(
                 name, email, phone, password
             ) { success, registerResponse ->
-                result(success,)
+                result(success)
             }
     }
 
 
-
-    fun userRegisterRequest(
+    fun userLoginRequest(
         m_context: Context,
-        fullName: String,
-        phoneNumber: String,
-        email: String,
-        password: String
+        emailOrPhone: String,
+        password: String,
+        result: (success: Boolean, loginResponse: RegisterUserResponse) -> Unit
     ) {
+        UserAuthRequest(m_context).loginUser(emailOrPhone, password) { success, loginResponse ->
+            result(success, loginResponse)
 
+        }
     }
 
 }

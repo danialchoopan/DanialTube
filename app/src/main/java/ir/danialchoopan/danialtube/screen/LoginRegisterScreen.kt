@@ -16,6 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
 import ir.danialchoopan.danialtube.viewmodels.HomeScreenViewModel
 import kotlin.math.log
 
@@ -26,7 +27,7 @@ fun LoginRegisterUserScreenSwitch(m_context: Context, homeScreenViewModel: HomeS
         mutableStateOf(true)
     }
     if (login_Screen_switch) {
-        LoginUserProfileScreen(m_context) { login ->
+        LoginUserProfileScreen(m_context, homeScreenViewModel) { login ->
             login_Screen_switch = login
         }
     } else {
@@ -37,7 +38,28 @@ fun LoginRegisterUserScreenSwitch(m_context: Context, homeScreenViewModel: HomeS
 }
 
 @Composable
-fun LoginUserProfileScreen(m_context: Context, onButtonLoginSwitchClick: (login: Boolean) -> Unit) {
+fun LoginUserProfileScreen(
+    m_context: Context,
+    homeScreenViewModel: HomeScreenViewModel,
+    onButtonLoginSwitchClick: (login: Boolean) -> Unit
+) {
+    //text box
+
+    var emailOrPhoneLoginTextBox by remember {
+        mutableStateOf("")
+    }
+    var passwordLoginTextBox by remember {
+        mutableStateOf("")
+    }
+    //other variables
+    var onGoingProgress by remember {
+        mutableStateOf(false)
+    }
+
+    if (onGoingProgress) {
+        DialogBoxLoading()
+    }
+
 
     Column(
         modifier = Modifier
@@ -49,10 +71,12 @@ fun LoginUserProfileScreen(m_context: Context, onButtonLoginSwitchClick: (login:
         Text(text = "ورود به حساب کاربری ", fontSize = 18.sp)
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
-            value = "",
+            value = emailOrPhoneLoginTextBox,
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { },
+            onValueChange = {
+                emailOrPhoneLoginTextBox = it
+            },
             label = { Text(text = "شماره همراه - پست الکترونیک") },
             isError = false,
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -64,10 +88,12 @@ fun LoginUserProfileScreen(m_context: Context, onButtonLoginSwitchClick: (login:
         )
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
-            value = "",
+            value = passwordLoginTextBox,
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
-            onValueChange = { },
+            onValueChange = {
+                passwordLoginTextBox = it
+            },
             label = { Text(text = "رمزعبور") },
             isError = false,
             keyboardOptions = KeyboardOptions.Default.copy(
@@ -80,7 +106,41 @@ fun LoginUserProfileScreen(m_context: Context, onButtonLoginSwitchClick: (login:
 
         Spacer(modifier = Modifier.height(15.dp))
         OutlinedButton(
-            modifier = Modifier.fillMaxWidth(), onClick = { }) {
+            modifier = Modifier.fillMaxWidth(), onClick = {
+
+                if (emailOrPhoneLoginTextBox.isNotEmpty() && passwordLoginTextBox.isNotEmpty()) {
+
+                    onGoingProgress = true
+
+                    homeScreenViewModel.userLoginRequest(
+                        m_context,
+                        emailOrPhoneLoginTextBox,
+                        passwordLoginTextBox
+                    ) { success, loginResponse ->
+                        if (success) {
+                            Toast.makeText(
+                                m_context,
+                                "شما به موفقیت وارد شدید ",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            Toast.makeText(
+                                m_context,
+                                "خوش آمدی ${loginResponse.user.name} ",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        } else {
+                            Toast.makeText(
+                                m_context,
+                                "نام کاربری یا رمز عبور اشتباه است  ",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        onGoingProgress = false
+                    }
+
+                }
+
+            }) {
             Text(text = "ورود به حساب کاربری", modifier = Modifier.padding(10.dp))
         }
         Spacer(modifier = Modifier.height(15.dp))
@@ -103,6 +163,7 @@ fun RegisterUserProfileScreen(
     onButtonLoginSwitchClick: (login: Boolean) -> Unit
 ) {
 
+    //text box
     var nameRegisterTextBox by remember {
         mutableStateOf("")
     }
@@ -117,6 +178,15 @@ fun RegisterUserProfileScreen(
     }
     var rePasswordRegisterTextBox by remember {
         mutableStateOf("")
+    }
+
+    //other variables
+    var onGoingProgress by remember {
+        mutableStateOf(false)
+    }
+
+    if (onGoingProgress) {
+        DialogBoxLoading()
     }
 
     Column(
@@ -222,7 +292,8 @@ fun RegisterUserProfileScreen(
                     rePasswordRegisterTextBox.isNotEmpty()
                 ) {
                     if (passwordRegisterTextBox == rePasswordRegisterTextBox) {
-                        homeScreenViewModel.userLoginRequest(
+                        onGoingProgress = true
+                        homeScreenViewModel.userRegisterRequest(
                             m_context,
                             nameRegisterTextBox,
                             emailRegisterTextBox,
@@ -234,6 +305,7 @@ fun RegisterUserProfileScreen(
                             } else {
                                 Toast.makeText(m_context, "false", Toast.LENGTH_SHORT).show()
                             }
+                            onGoingProgress = false
                         }
                         //clear text boxs
                         nameRegisterTextBox = ""
@@ -244,8 +316,12 @@ fun RegisterUserProfileScreen(
                     } else {
                         Toast.makeText(m_context, "not match passwords", Toast.LENGTH_SHORT).show()
                     }
-                }else{
-                    Toast.makeText(m_context, "empty inputs ", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(
+                        m_context,
+                        "لطفا ورودی های خود را برسی کنید ",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
             }) {
             Text(text = "نام نویسی", modifier = Modifier.padding(10.dp))

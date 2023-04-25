@@ -30,7 +30,7 @@ val Typography = Typography(
 
 )
 
-private val myCustomFontVazir = FontFamily(
+val myCustomFontVazir = FontFamily(
     Font(R.font.vazir2),
 )
 
