@@ -128,14 +128,16 @@ fun LoginUserProfileScreen(
                                 "خوش آمدی ${loginResponse.user.name} ",
                                 Toast.LENGTH_SHORT
                             ).show()
+
                         } else {
                             Toast.makeText(
                                 m_context,
                                 "نام کاربری یا رمز عبور اشتباه است  ",
                                 Toast.LENGTH_SHORT
                             ).show()
+
+                            onGoingProgress = false
                         }
-                        onGoingProgress = false
                     }
 
                 }

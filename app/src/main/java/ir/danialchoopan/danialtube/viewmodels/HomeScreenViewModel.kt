@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import ir.danialchoopan.danialtube.data.api.model.RegisterUserResponse
+import ir.danialchoopan.danialtube.data.api.model.User
 import ir.danialchoopan.danialtube.data.api.requests.UserAuthRequest
 
 class HomeScreenViewModel() : ViewModel() {
@@ -22,6 +23,20 @@ class HomeScreenViewModel() : ViewModel() {
         return getUserHasLogin
     }
 
+    fun getUserLoginData(m_context: Context):User {
+        val userSharedPreferences =
+            m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
+        val user = User(
+            "",
+            userSharedPreferences.getString("email", "").toString(),
+            userSharedPreferences.getInt("id", 1),
+            userSharedPreferences.getString("name", "").toString(),
+            userSharedPreferences.getString("phone","").toString(),
+            ""
+        )
+        return user
+    }
+
     fun setUserHasLogin(m_context: Context) {
         val userSharedPreferences =
             m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
@@ -31,6 +46,7 @@ class HomeScreenViewModel() : ViewModel() {
     }
 
 
+    //user requests
     fun userRegisterRequest(
         m_context: Context,
         name: String,
@@ -56,8 +72,11 @@ class HomeScreenViewModel() : ViewModel() {
     ) {
         UserAuthRequest(m_context).loginUser(emailOrPhone, password) { success, loginResponse ->
             result(success, loginResponse)
-
         }
+    }
+
+    fun userCheckPhoneValidation(m_context: Context) {
+
     }
 
 }

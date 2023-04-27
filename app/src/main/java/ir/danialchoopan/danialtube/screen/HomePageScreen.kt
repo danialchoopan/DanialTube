@@ -1,6 +1,7 @@
 package ir.danialchoopan.danialtube.screen
 
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -108,10 +109,12 @@ private fun UserAuthScreenLoginRegisterProfile(
     }
     Column(Modifier.fillMaxSize()) {
         if (is_login) {
-            LoginRegisterUserScreenSwitch(m_context,homeScreenViewModel)
-        }//login - register
+            UserProfileScreen(m_context,homeScreenViewModel)
+
+        }//user has a login token
         else {
-            UserProfileScreen()
-        }//user profile
+            LoginRegisterUserScreenSwitch(m_context,homeScreenViewModel)
+
+        }//show login register page
     }
 }

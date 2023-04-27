@@ -138,6 +138,12 @@ class UserAuthRequest(val m_context: Context) {
 
     }
 
+    //phone number requests
+    fun requestCheckPhoneVerify() {
+
+    }
+
+
     fun requestSmsValidationCode() {
 
     }
