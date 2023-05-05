@@ -8,9 +8,22 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import ir.danialchoopan.danialtube.data.api.model.RegisterUserResponse
 import ir.danialchoopan.danialtube.data.api.model.User
+import ir.danialchoopan.danialtube.data.api.model.homepage.HomePageRequestDataModel
+import ir.danialchoopan.danialtube.data.api.requests.HomePageRequest
 import ir.danialchoopan.danialtube.data.api.requests.UserAuthRequest
 
 class HomeScreenViewModel() : ViewModel() {
+
+    //home page
+    fun getHomePageData(
+        m_context: Context,
+        resultViewModel: (success: Boolean, homePageDataView: HomePageRequestDataModel) -> Unit
+    ) {
+        HomePageRequest(m_context).homePage { success, homePageData ->
+            resultViewModel(success, homePageData)
+        }
+    }
+
 
     //checking user has login
     private var getUserHasLogin by mutableStateOf(false)
@@ -23,7 +36,7 @@ class HomeScreenViewModel() : ViewModel() {
         return getUserHasLogin
     }
 
-    fun getUserLoginData(m_context: Context):User {
+    fun getUserLoginData(m_context: Context): User {
         val userSharedPreferences =
             m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
         val user = User(
@@ -31,7 +44,7 @@ class HomeScreenViewModel() : ViewModel() {
             userSharedPreferences.getString("email", "").toString(),
             userSharedPreferences.getInt("id", 1),
             userSharedPreferences.getString("name", "").toString(),
-            userSharedPreferences.getString("phone","").toString(),
+            userSharedPreferences.getString("phone", "").toString(),
             ""
         )
         return user
@@ -73,6 +86,13 @@ class HomeScreenViewModel() : ViewModel() {
         UserAuthRequest(m_context).loginUser(emailOrPhone, password) { success, loginResponse ->
             result(success, loginResponse)
         }
+    }
+
+    //user logout
+    fun userLoginRequest(
+        m_context: Context,
+    ) {
+        UserAuthRequest(m_context).logoutUser()
     }
 
     fun userCheckPhoneValidation(m_context: Context) {

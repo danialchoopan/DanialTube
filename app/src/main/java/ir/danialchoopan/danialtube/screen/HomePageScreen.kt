@@ -47,7 +47,7 @@ fun HomePageScreen() {
         content = {
             when (bottom_navigation_switch_number) {
                 "home" -> {
-                    HomePageScreenScaffoldContent()
+                    HomePageScreenScaffoldContent(m_context,homeScreenViewModel)
                 }//profile
                 "search" -> {
                     Column(modifier = Modifier.fillMaxWidth()) {

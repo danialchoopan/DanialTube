@@ -143,7 +143,6 @@ class UserAuthRequest(val m_context: Context) {
 
     }
 
-
     fun requestSmsValidationCode() {
 
     }
@@ -155,4 +154,8 @@ class UserAuthRequest(val m_context: Context) {
     fun checkSmsValidation() {
 
     }
+    //end phone requests
+
+
+
 }

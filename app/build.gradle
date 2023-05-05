@@ -70,4 +70,11 @@ dependencies {
     //Gson
     implementation 'com.google.code.gson:gson:2.10.1'
 
+    //coil
+    implementation "io.coil-kt:coil-compose:2.2.0"
+
+    //slider
+    implementation 'com.google.accompanist:accompanist-pager:0.22.0-rc'
+
+
 }

@@ -29,7 +29,9 @@ fun UserProfileScreen(
                 Text(text = userData.name)
                 Text(text = userData.email)   
             }
-            OutlinedButton(onClick = { }) {
+            OutlinedButton(onClick = {
+
+            }) {
                 Text(text = "خروج")
             }
         }
