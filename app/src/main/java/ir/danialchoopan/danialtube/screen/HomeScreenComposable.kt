@@ -27,6 +27,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -34,22 +36,19 @@ import ir.danialchoopan.danialtube.R
 import ir.danialchoopan.danialtube.data.api.RequestEndPoints
 import ir.danialchoopan.danialtube.data.api.model.homepage.HomePageRequestDataModel
 import ir.danialchoopan.danialtube.data.api.requests.HomePageRequest
+import ir.danialchoopan.danialtube.ui.componets.AutoSlidingCarousel
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
 import ir.danialchoopan.danialtube.viewmodels.HomeScreenViewModel
+import ir.danialchoopan.utils.LoadImageFormURLFixutils
 import kotlinx.coroutines.delay
 
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
 @Composable
 fun HomePageScreenScaffoldContent(
     m_context: Context, homeScreenViewModel: HomeScreenViewModel
 ) {
 
-    var homePageDataScreen by remember {
-        mutableStateOf(HomePageRequestDataModel(null, null, null, null, emptyList()))
-    }
-
-    //other variables
     var onGoingProgress by remember {
         mutableStateOf(true)
     }
@@ -57,25 +56,6 @@ fun HomePageScreenScaffoldContent(
     if (onGoingProgress) {
         DialogBoxLoading()
     }
-
-
-    //load data new way
-//    var myLoadedData by remember {
-//        mutableStateOf(HomePageRequestDataModel())
-//    }
-//
-//    val homePagerequest13=HomePageRequest(m_context)
-//    LaunchedEffect(Unit){
-//        myLoadedData=homePagerequest13.homePage1()
-//    }
-
-//    if(myLoadedData!=null){
-//        myLoadedData.homePageSlider?.get(0)?.let { Text(text = it.name) }
-//        myLoadedData.homePageSlider?.get(0)?.let {         Toast.makeText(m_context,it.name,Toast.LENGTH_SHORT).show() }
-//
-//    }else{
-//        Toast.makeText(m_context,"null data",Toast.LENGTH_SHORT).show()
-//    }
 
     //end load data new way
     var homePageData2 by remember { mutableStateOf<HomePageRequestDataModel?>(null) }
@@ -87,7 +67,7 @@ fun HomePageScreenScaffoldContent(
         }
     }
     if (homePageData2 != null) {
-        Text(text = homePageData2!!.homePageSlider?.get(1)!!.name)
+
         onGoingProgress = false
         val rememberScrollState = rememberScrollState()
         Column(
@@ -96,70 +76,56 @@ fun HomePageScreenScaffoldContent(
                 .verticalScroll(rememberScrollState)
         ) {
 
-
-            val imageForSlider1 = homePageData2!!.homePageSlider
-
-//            AsyncImage(
-//                model = ImageRequest.Builder(LocalContext.current)
-//                    .data(imgLoadUrlTest)
-//                    .crossfade(true)
-//                    .build(),
-//                contentDescription = "",
-//                contentScale = ContentScale.Crop,
-//                modifier = Modifier.fillMaxWidth(),
-//                onError = {
-//                    Log.d("onError image loader coil ","on error")
-//
-//                    Log.d("onError image loader coil ",it.toString())
-//                },
-//                onLoading = {
-//                    Log.d("onError image loader coil ","on loading")
-//                }, onSuccess = {
-//                    Log.d("onError image loader coil ","on success")
-//                }
-//            )
-
-
-            Card{
+            val sliderHomePagePhotos = homePageData2!!.homePageSlider
+            Card {
                 AutoSlidingCarousel(
-                    itemsCount = imageForSlider1!!.size,
+                    itemsCount = sliderHomePagePhotos!!.size,
                     itemContent = { index ->
-                        AsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(RequestEndPoints.storageLoad+imageForSlider1!![index].photo.replace("\\","/"))
-                                .crossfade(true)
-                                .build(),
+                        GlideImage(
+                            model = LoadImageFormURLFixutils(
+                                sliderHomePagePhotos[index].photo
+                            ),
                             contentDescription = "",
                             contentScale = ContentScale.Crop,
-                            modifier = Modifier.fillMaxWidth().height(200.dp)
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(250.dp),
                         )
                     }
                 )
             }
+//            Row(
+//                horizontalArrangement = Arrangement.SpaceBetween,
+//                verticalAlignment = Alignment.CenterVertically,
+//                modifier = Modifier.fillMaxWidth().padding(15.dp)
+//            ) {
+//                  Text(text = "بیشتر ...", color = Color.Blue)
+//            }
+            Text(text = "درسته بندی ها",
+                modifier = Modifier.fillMaxWidth().padding(15.dp))
 
-            Text(text = "درسته بندی ها", modifier = Modifier.padding(10.dp))
             //category
 
             LazyRow(
                 modifier = Modifier.fillMaxWidth(), content = {
                     items(items = homePageData2?.coursesCategory!!) { categoryItem ->
                         Spacer(modifier = Modifier.width(5.dp))
-                        Card(elevation = 2.dp, modifier = Modifier.width(110.dp)) {
+                        Card(elevation = 2.dp, modifier = Modifier.width(110.dp).height(150.dp)) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
                                 verticalArrangement = Arrangement.Center
                             ) {
-                                AsyncImage(
-                                    model = RequestEndPoints.storageLoad + categoryItem.icon.replace(
-                                        "\\",
-                                        "/"
+
+                                GlideImage(
+                                    model = LoadImageFormURLFixutils(
+                                        categoryItem.icon
                                     ), contentDescription = "",
-                                    modifier = Modifier
-                                        .fillMaxWidth()
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.height(110.dp)
                                 )
 
                                 Column(modifier = Modifier.padding(10.dp)) {
-                                    Text(text = categoryItem.name, fontSize = 12.sp)
+                                    Text(text = categoryItem.name, fontSize = 14.sp, color = Color.DarkGray)
                                 }
                             }
                         }
@@ -167,113 +133,218 @@ fun HomePageScreenScaffoldContent(
                     }
                 })
 
-            Text(text = "محبوب ترین دوره ها", modifier = Modifier.padding(10.dp))
-
-
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(
-                        rememberScrollState()
-                    )
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(15.dp)
             ) {
-                for (i in 1..10) {
-                    Card(
-                        elevation = 2.dp, modifier = Modifier
-                            .width(250.dp)
-                            .padding(5.dp)
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.ic_launcher_foreground),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(Color.Black)
-                            )
-                            Column(modifier = Modifier.padding(10.dp)) {
-                                Text(text = "آموزش برنامه نویسی اندروید")
-                                Spacer(modifier = Modifier.height(5.dp))
-                                Text(text = "برنامه نویسی ")
-                                Row() {
-                                    Text(text = "20 ساعت")
-                                    Text(text = "24.0 IRT")
-                                }
-                            }
-                        }
-                    }
-                }
+                Text(text = "محبوب ترین دوره ها")
+                Text(text = "بیشتر ...", color = Color.Blue)
             }
 
-            Text(text = "دوره منتخب", modifier = Modifier.padding(10.dp))
+            val popularCourses = homePageData2!!.allCoursesWithVideosPopular
+
+            if (popularCourses != null) {
+
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(), content = {
+
+                        items(popularCourses) { course ->
+
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Card(
+                                elevation = 2.dp, modifier = Modifier
+                                    .width(260.dp)
+                                    .padding(5.dp)
+                            ) {
+
+                                Column(
+                                ) {
+
+                                    GlideImage(
+                                        model = LoadImageFormURLFixutils(
+                                            course.thumbnail
+                                        ),
+                                        contentScale = ContentScale.Crop,
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .height(150.dp)
+                                            .width(260.dp)
+                                    )
+
+                                    Column(modifier = Modifier.padding(15.dp)) {
+                                        Text(
+                                            text = course.nameTitle,
+                                            color = Color.DarkGray,
+                                            fontSize = 16.sp
+                                        )
+                                        Spacer(modifier = Modifier.height(5.dp))
+
+                                        Text(
+                                            text = "برنامه نویسی اندروید",
+                                            color = Color.Gray,
+                                            fontSize = 14.sp
+                                        )
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+
+                                            Text(
+                                                text = "مدرس : " + course.user.name,
+                                                color = Color.Gray,
+                                                fontSize = 13.sp
+                                            )
+
+                                            val priceCourse = course.price.toString() + " تومان "
+                                            Text(text = priceCourse, color = Color(0xFF2E7D32),
+                                                fontSize = 14.sp)
+                                        }
+                                    }
+                                }
+                            }
+
+                            Spacer(modifier = Modifier.width(5.dp))
+
+                        }
+                    })
+
+            }
+
+            Text(text = "دوره منتخب", modifier = Modifier.padding(15.dp))
+            val mostPapularCourse = homePageData2!!.allCoursesWithTeacherMostPopular
             Card(
                 elevation = 2.dp, modifier = Modifier
                     .fillMaxWidth()
-                    .padding(10.dp)
+                    .padding(5.dp)
             ) {
+
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
                 ) {
-                    Image(
-                        painter = painterResource(R.drawable.ic_launcher_foreground),
+
+                    GlideImage(
+                        model = LoadImageFormURLFixutils(
+                            mostPapularCourse!!.thumbnail
+                        ),
+                        contentScale = ContentScale.Crop,
                         contentDescription = "",
                         modifier = Modifier
+                            .height(150.dp)
                             .fillMaxWidth()
-                            .background(Color.Cyan)
                     )
-                    Column(modifier = Modifier.padding(10.dp)) {
-                        Text(text = "آموزش برنامه نویسی اندروید")
+
+                    Column(modifier = Modifier.padding(15.dp)) {
+                        Text(
+                            text = mostPapularCourse!!.nameTitle,
+                            color = Color.DarkGray,
+                            fontSize = 16.sp
+                        )
                         Spacer(modifier = Modifier.height(5.dp))
-                        Text(text = "برنامه نویسی ")
-                        Row() {
-                            Text(text = "20 ساعت")
-                            Text(text = "24.0 IRT")
+
+                        Text(
+                            text = "برنامه نویسی اندروید",
+                            color = Color.Gray,
+                            fontSize = 14.sp
+                        )
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+
+                            Text(
+                                text = "مدرس : " + mostPapularCourse!!.user.name,
+                                color = Color.Gray,
+                                fontSize = 13.sp
+                            )
+
+                            val priceCourse = mostPapularCourse!!.price.toString() + " تومان "
+                            Text(text = priceCourse, color = Color(0xFF2E7D32),
+                                fontSize = 14.sp)
                         }
                     }
                 }
             }
-            Text(text = "جدید ترین", modifier = Modifier.padding(10.dp))
+
+
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalScroll(
-                        rememberScrollState()
-                    )
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth().padding(15.dp)
             ) {
-                for (i in 1..10) {
-                    Card(
-                        elevation = 2.dp, modifier = Modifier
-                            .width(250.dp)
-                            .padding(5.dp)
-                    ) {
-                        Column(
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            verticalArrangement = Arrangement.Center
-                        ) {
-                            Image(
-                                painter = painterResource(R.drawable.ic_launcher_foreground),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .background(Color.Green)
-                            )
-                            Column(modifier = Modifier.padding(10.dp)) {
-                                Text(text = "آموزش برنامه نویسی اندروید")
-                                Spacer(modifier = Modifier.height(5.dp))
-                                Text(text = "برنامه نویسی ")
-                                Row() {
-                                    Text(text = "20 ساعت")
-                                    Text(text = "24.0 IRT")
+                Text(text = "پرفروش ترین دوره ها")
+                Text(text = "بیشتر ...", color = Color.Blue)
+            }
+
+            val bestSellingCourses = homePageData2!!.allCoursesWithTeacherBestSelling
+
+            if (bestSellingCourses != null) {
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(), content = {
+
+                        items(bestSellingCourses) { course ->
+
+                            Spacer(modifier = Modifier.width(5.dp))
+                            Card(
+                                elevation = 2.dp, modifier = Modifier
+                                    .width(260.dp)
+                                    .padding(5.dp)
+                            ) {
+
+                                Column(
+                                ) {
+
+                                    GlideImage(
+                                        model = LoadImageFormURLFixutils(
+                                            course.thumbnail
+                                        ),
+                                        contentScale = ContentScale.Crop,
+                                        contentDescription = "",
+                                        modifier = Modifier
+                                            .height(150.dp)
+                                            .width(260.dp)
+                                    )
+
+                                    Column(modifier = Modifier.padding(15.dp)) {
+                                        Text(
+                                            text = course.nameTitle,
+                                            color = Color.DarkGray,
+                                            fontSize = 16.sp
+                                        )
+                                        Spacer(modifier = Modifier.height(5.dp))
+
+                                        Text(
+                                            text = "برنامه نویسی اندروید",
+                                            color = Color.Gray,
+                                            fontSize = 14.sp
+                                        )
+                                        Row(
+                                            horizontalArrangement = Arrangement.SpaceBetween,
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            modifier = Modifier.fillMaxWidth()
+                                        ) {
+
+                                            Text(
+                                                text = "مدرس : " + course.user.name,
+                                                color = Color.Gray,
+                                                fontSize = 13.sp
+                                            )
+
+                                            val priceCourse = course.price.toString() + " تومان "
+                                            Text(text = priceCourse, color = Color(0xFF2E7D32),
+                                                fontSize = 14.sp)
+                                        }
+                                    }
                                 }
                             }
+
+                            Spacer(modifier = Modifier.width(5.dp))
+
                         }
-                    }
-                }
+                    })
             }
+
             Spacer(modifier = Modifier.height(80.dp))
         }
     } else {
@@ -282,89 +353,4 @@ fun HomePageScreenScaffoldContent(
 
 }
 
-
-//slider components
-
-@Composable
-fun IndicatorDot(
-    modifier: Modifier = Modifier,
-    size: Dp,
-    color: Color
-) {
-    Box(
-        modifier = modifier
-            .size(size)
-            .clip(CircleShape)
-            .background(color)
-    )
-}
-
-@Composable
-fun DotsIndicator(
-    modifier: Modifier = Modifier,
-    totalDots: Int,
-    selectedIndex: Int,
-    selectedColor: Color = Color.White,
-    unSelectedColor: Color = Color.Gray,
-    dotSize: Dp
-) {
-    LazyRow(
-        modifier = modifier
-            .wrapContentWidth()
-            .wrapContentHeight()
-    ) {
-        items(totalDots) { index ->
-            IndicatorDot(
-                color = if (index == selectedIndex) selectedColor else unSelectedColor,
-                size = dotSize
-            )
-
-            if (index != totalDots - 1) {
-                Spacer(modifier = Modifier.padding(horizontal = 2.dp))
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalPagerApi::class)
-@Composable
-fun AutoSlidingCarousel(
-    modifier: Modifier = Modifier,
-    autoSlideDuration: Long = 3000,
-    pagerState: PagerState = remember { PagerState() },
-    itemsCount: Int,
-    itemContent: @Composable (index: Int) -> Unit,
-) {
-    val isDragged by pagerState.interactionSource.collectIsDraggedAsState()
-
-    LaunchedEffect(pagerState.currentPage) {
-        delay(autoSlideDuration)
-        pagerState.animateScrollToPage((pagerState.currentPage + 1) % itemsCount)
-    }
-
-    Box(
-        modifier = modifier.fillMaxWidth(),
-    ) {
-        HorizontalPager(count = itemsCount, state = pagerState) { page ->
-            itemContent(page)
-        }
-
-        // you can remove the surface in case you don't want
-        // the transparant bacground
-        Surface(
-            modifier = Modifier
-                .padding(bottom = 8.dp)
-                .align(Alignment.BottomCenter),
-            shape = CircleShape,
-            color = Color.Black.copy(alpha = 0.5f)
-        ) {
-            DotsIndicator(
-                modifier = Modifier.padding(horizontal = 8.dp, vertical = 6.dp),
-                totalDots = itemsCount,
-                selectedIndex = if (isDragged) pagerState.currentPage else pagerState.targetPage,
-                dotSize = 8.dp
-            )
-        }
-    }
-}
 
