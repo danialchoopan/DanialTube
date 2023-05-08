@@ -17,4 +17,5 @@ object RequestEndPoints {
     
     //course
     val showCourseById = "$rootDomainApi/course/show"//arg get {id} => course/show/{id}
+    val searchCourse = "$rootDomainApi/course/search"//arg get {id} => course/show/{id}
 }

@@ -1,4 +1,4 @@
-package ir.danialchoopan.danialtube.data.api.requests
+package ir.danialchoopan.danialtube.data.api.requests.course
 
 import android.content.Context
 import com.android.volley.Request

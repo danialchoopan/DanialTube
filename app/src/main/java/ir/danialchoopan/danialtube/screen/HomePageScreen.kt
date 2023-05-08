@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import ir.danialchoopan.danialtube.screen.search.searchCourseScreen
 import ir.danialchoopan.danialtube.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.launch
 
@@ -54,9 +55,7 @@ fun HomePageScreen(navController: NavController) {
                     }
                 }//profile
                 "search" -> {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        Text(text = "baka mitai")
-                    }
+                    searchCourseScreen(navController = navController)
                 }//search
                 "profile" -> {
 

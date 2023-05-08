@@ -1,15 +1,13 @@
 package ir.danialchoopan.danialtube.viewmodels
 
 import android.content.Context
-import androidx.compose.runtime.currentComposer
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import ir.danialchoopan.danialtube.data.api.model.RegisterUserResponse
 import ir.danialchoopan.danialtube.data.api.model.User
-import ir.danialchoopan.danialtube.data.api.requests.HomePageRequest
-import ir.danialchoopan.danialtube.data.api.requests.UserAuthRequest
+import ir.danialchoopan.danialtube.data.api.requests.user.UserAuthRequest
 
 class HomeScreenViewModel() : ViewModel() {
 

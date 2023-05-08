@@ -1,7 +1,5 @@
 package ir.danialchoopan.danialtube.screen.course
 
-import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -25,18 +23,11 @@ import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import ir.danialchoopan.danialtube.data.api.model.courseShow.ShowCourse
-import ir.danialchoopan.danialtube.data.api.model.homepage.HomePageDataModelRequest
-import ir.danialchoopan.danialtube.data.api.requests.CourseRequest
-import ir.danialchoopan.danialtube.data.api.requests.HomePageRequest
-import ir.danialchoopan.danialtube.screen.HomePageScreenScaffoldContent
-import ir.danialchoopan.danialtube.ui.componets.AutoSlidingCarousel
+import ir.danialchoopan.danialtube.data.api.requests.course.CourseRequest
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
-import ir.danialchoopan.danialtube.viewmodels.HomeScreenViewModel
 import ir.danialchoopan.utils.LoadImageFormURLFixutils
 import ir.danialchoopan.utils.bottomBorder
 import ir.danialchoopan.utils.formatPrice
-import kotlinx.coroutines.launch
-import java.text.NumberFormat
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
 @Composable

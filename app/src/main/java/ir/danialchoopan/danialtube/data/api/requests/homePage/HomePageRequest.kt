@@ -1,14 +1,10 @@
-package ir.danialchoopan.danialtube.data.api.requests
+package ir.danialchoopan.danialtube.data.api.requests.homePage
 
 import android.content.Context
-import android.util.Log
-import com.android.volley.Request.Method
 import com.android.volley.toolbox.StringRequest
 import com.google.gson.Gson
 import ir.danialchoopan.danialtube.data.api.RequestEndPoints
 import ir.danialchoopan.danialtube.data.api.VolleySingleTon
-import ir.danialchoopan.danialtube.data.api.model.RegisterUserResponse
-import ir.danialchoopan.danialtube.data.api.model.User
 import ir.danialchoopan.danialtube.data.api.model.homepage.HomePageDataModelRequest
 
 class HomePageRequest(val m_context: Context) {

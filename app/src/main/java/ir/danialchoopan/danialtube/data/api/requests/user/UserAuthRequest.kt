@@ -1,4 +1,4 @@
-package ir.danialchoopan.danialtube.data.api.requests
+package ir.danialchoopan.danialtube.data.api.requests.user
 
 import android.content.Context
 import android.util.Log

@@ -27,10 +27,11 @@ fun courseCardShowComponent(
     teacherName: String,
     coursePrice: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifierCard: Modifier = Modifier,
+    modifierImg: Modifier = Modifier
 ) {
     Card(
-        elevation = 2.dp, modifier = modifier
+        elevation = 2.dp, modifier = modifierCard
             .width(260.dp)
             .padding(5.dp),
         onClick = {
@@ -47,7 +48,7 @@ fun courseCardShowComponent(
                 ),
                 contentScale = ContentScale.Crop,
                 contentDescription = "",
-                modifier = Modifier
+                modifier = modifierImg
                     .height(150.dp)
                     .width(260.dp)
             )

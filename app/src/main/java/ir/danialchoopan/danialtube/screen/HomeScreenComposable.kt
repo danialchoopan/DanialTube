@@ -2,7 +2,6 @@ package ir.danialchoopan.danialtube.screen
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -20,10 +19,8 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
-import ir.danialchoopan.danialtube.data.api.model.CourseCardShow
-import ir.danialchoopan.danialtube.data.api.model.homepage.CoursesWithTeacherMostPopular
 import ir.danialchoopan.danialtube.data.api.model.homepage.HomePageDataModelRequest
-import ir.danialchoopan.danialtube.data.api.requests.HomePageRequest
+import ir.danialchoopan.danialtube.data.api.requests.homePage.HomePageRequest
 import ir.danialchoopan.danialtube.ui.componets.AutoSlidingCarousel
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
 import ir.danialchoopan.danialtube.ui.componets.courseCardShowComponent
@@ -190,7 +187,7 @@ fun HomePageScreenScaffoldContent(
                     //on click
                     onCourseClick(mostPapularCourse.id)
                 },
-                modifier = Modifier
+                modifierCard = Modifier
                     .height(150.dp)
                     .fillMaxWidth()
             )
@@ -214,7 +211,7 @@ fun HomePageScreenScaffoldContent(
 
             if (bestSellingCourses != null) {
                 LazyRow(
-                    modifier = Modifier.fillMaxWidth(), content = {
+                    modifier = Modifier.fillMaxWidth().fillMaxHeight(), content = {
 
                         items(bestSellingCourses) { course ->
 
