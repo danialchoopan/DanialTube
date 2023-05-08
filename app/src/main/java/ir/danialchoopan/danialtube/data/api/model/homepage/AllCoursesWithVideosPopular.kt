@@ -16,6 +16,8 @@ data class AllCoursesWithVideosPopular(
     val nameTitle: String,
     @SerializedName("price")
     val price: Int,
+    @SerializedName("sub_course_categories")
+    val subCourseCategories: SubCourseCategories,
     @SerializedName("teacher_id")
     val teacherId: Int,
     @SerializedName("thumbnail")
@@ -23,7 +25,7 @@ data class AllCoursesWithVideosPopular(
     @SerializedName("updated_at")
     val updatedAt: String,
     @SerializedName("user")
-    val user: UserXX,
+    val user: UserX,
     @SerializedName("videos")
     val videos: List<Video>
 )

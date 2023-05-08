@@ -8,21 +8,20 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import ir.danialchoopan.danialtube.data.api.model.RegisterUserResponse
 import ir.danialchoopan.danialtube.data.api.model.User
-import ir.danialchoopan.danialtube.data.api.model.homepage.HomePageRequestDataModel
 import ir.danialchoopan.danialtube.data.api.requests.HomePageRequest
 import ir.danialchoopan.danialtube.data.api.requests.UserAuthRequest
 
 class HomeScreenViewModel() : ViewModel() {
 
     //home page
-    fun getHomePageData(
-        m_context: Context,
-        resultViewModel: (success: Boolean, homePageDataView: HomePageRequestDataModel) -> Unit
-    ) {
-        HomePageRequest(m_context).homePage { success, homePageData ->
-            resultViewModel(success, homePageData)
-        }
-    }
+//    fun getHomePageData(
+//        m_context: Context,
+//        resultViewModel: (success: Boolean, homePageDataView: HomePageRequestDataModel) -> Unit
+//    ) {
+//        HomePageRequest(m_context).homePage { success, homePageData ->
+//            resultViewModel(success, homePageData)
+//        }
+//    }
 
 
     //checking user has login

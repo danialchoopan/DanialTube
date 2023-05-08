@@ -3,7 +3,7 @@ package ir.danialchoopan.danialtube.data.api.model.homepage
 
 import com.google.gson.annotations.SerializedName
 
-data class AllCoursesWithTeacherMostPopular(
+data class CoursesWithTeacherMostPopular(
     @SerializedName("category_id")
     val categoryId: Int,
     @SerializedName("created_at")
@@ -16,6 +16,8 @@ data class AllCoursesWithTeacherMostPopular(
     val nameTitle: String,
     @SerializedName("price")
     val price: Int,
+    @SerializedName("sub_course_categories")
+    val subCourseCategories: SubCourseCategories,
     @SerializedName("teacher_id")
     val teacherId: Int,
     @SerializedName("thumbnail")
@@ -23,7 +25,7 @@ data class AllCoursesWithTeacherMostPopular(
     @SerializedName("updated_at")
     val updatedAt: String,
     @SerializedName("user")
-    val user: UserX,
+    val user: UserXX,
     @SerializedName("videos")
     val videos: List<Video>
 )

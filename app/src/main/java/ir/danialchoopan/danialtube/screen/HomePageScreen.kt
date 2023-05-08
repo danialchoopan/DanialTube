@@ -1,6 +1,7 @@
 package ir.danialchoopan.danialtube.screen
 
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
@@ -13,12 +14,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import ir.danialchoopan.danialtube.viewmodels.HomeScreenViewModel
 import kotlinx.coroutines.launch
 
 
 @Composable
-fun HomePageScreen() {
+fun HomePageScreen(navController: NavController) {
     val homeScreenViewModel: HomeScreenViewModel = viewModel()
     val m_context = LocalContext.current
     val scaffoldState =
@@ -47,7 +49,9 @@ fun HomePageScreen() {
         content = {
             when (bottom_navigation_switch_number) {
                 "home" -> {
-                    HomePageScreenScaffoldContent(m_context,homeScreenViewModel)
+                    HomePageScreenScaffoldContent(m_context, homeScreenViewModel) { courseId ->
+                        navController.navigate("course/$courseId")
+                    }
                 }//profile
                 "search" -> {
                     Column(modifier = Modifier.fillMaxWidth()) {
@@ -109,11 +113,11 @@ private fun UserAuthScreenLoginRegisterProfile(
     }
     Column(Modifier.fillMaxSize()) {
         if (is_login) {
-            UserProfileScreen(m_context,homeScreenViewModel)
+            UserProfileScreen(m_context, homeScreenViewModel)
 
         }//user has a login token
         else {
-            LoginRegisterUserScreenSwitch(m_context,homeScreenViewModel)
+            LoginRegisterUserScreenSwitch(m_context, homeScreenViewModel)
 
         }//show login register page
     }
