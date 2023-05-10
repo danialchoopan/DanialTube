@@ -1,4 +1,4 @@
-package ir.danialchoopan.utils
+package ir.danialchoopan.danialtube.utils
 
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed

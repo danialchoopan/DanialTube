@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.ViewModel
 import ir.danialchoopan.danialtube.data.api.model.RegisterUserResponse
 import ir.danialchoopan.danialtube.data.api.model.User
@@ -11,24 +12,13 @@ import ir.danialchoopan.danialtube.data.api.requests.user.UserAuthRequest
 
 class HomeScreenViewModel() : ViewModel() {
 
-    //home page
-//    fun getHomePageData(
-//        m_context: Context,
-//        resultViewModel: (success: Boolean, homePageDataView: HomePageRequestDataModel) -> Unit
-//    ) {
-//        HomePageRequest(m_context).homePage { success, homePageData ->
-//            resultViewModel(success, homePageData)
-//        }
-//    }
-
-
     //checking user has login
     private var getUserHasLogin by mutableStateOf(false)
     fun getUserHasLogin(m_context: Context): Boolean {
         val userSharedPreferences =
             m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
-        val user_login_result = "has_login"
-        userSharedPreferences.getString("has_login", "no_login") ?: "no_login"
+        var user_login_result = "has_login"
+        user_login_result=userSharedPreferences.getString("has_login", "no_login") ?: "no_login"
         getUserHasLogin = user_login_result == "has_login"
         return getUserHasLogin
     }
@@ -86,10 +76,15 @@ class HomeScreenViewModel() : ViewModel() {
     }
 
     //user logout
-    fun userLoginRequest(
+    fun userLogoutRequest(
         m_context: Context,
+        result:()->Unit
     ) {
-        UserAuthRequest(m_context).logoutUser()
+        val userAuthRequest = UserAuthRequest(m_context)
+        userAuthRequest.logoutUser {
+            result()
+        }
+
     }
 
     fun userCheckPhoneValidation(m_context: Context) {

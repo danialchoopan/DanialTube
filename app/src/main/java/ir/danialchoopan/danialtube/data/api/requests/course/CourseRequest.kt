@@ -8,8 +8,11 @@ import ir.danialchoopan.danialtube.data.api.RequestEndPoints
 import ir.danialchoopan.danialtube.data.api.VolleySingleTon
 import ir.danialchoopan.danialtube.data.api.model.courseSearch.SearchCourseModel
 import ir.danialchoopan.danialtube.data.api.model.courseShow.ShowCourse
+import ir.danialchoopan.danialtube.data.api.model.myCourses.MyCoursesModel
+import ir.danialchoopan.danialtube.data.api.model.myFavouriteCourses.MyFavouriteCoursesModel
 
 class CourseRequest(val m_context: Context) {
+    val userSharedPreferences = m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
 
     fun showCourse(course_id:String,resultRequest:(showCourse:ShowCourse)->Unit){
         val str_request_show_course =
@@ -85,6 +88,82 @@ class CourseRequest(val m_context: Context) {
             }//end request register
         VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request_search_course)
     }
+
+    fun MyCourses(resultRequest:(myCoursesModel:MyCoursesModel)->Unit){
+        val str_request =
+            object : StringRequest(
+                Method.POST, RequestEndPoints.myCourse ,
+                { strResponse ->
+                    Log.d("str response my course ",strResponse)
+                    try {
+                        val myCoursesModel =
+                            Gson().fromJson(strResponse, MyCoursesModel::class.java)
+                        resultRequest(myCoursesModel)
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                //error
+                , {
+                    it.printStackTrace()
+                }) {
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val requestHeaders = HashMap<String, String>()
+                    val token_access=userSharedPreferences.getString("token","")
+                    requestHeaders["Authorization"] = "Bearer $token_access";
+                    return requestHeaders
+
+                }
+
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+
+                    return m_params
+                }
+            }//end request register
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
+    }
+
+    fun MyFavoritesCourses(resultRequest:(myFavouriteCoursesModel:MyFavouriteCoursesModel)->Unit){
+        val str_request =
+            object : StringRequest(
+                Method.POST, RequestEndPoints.courseFavorites ,
+                { strResponse ->
+                    try {
+                        val myFavouriteCoursesModel =
+                            Gson().fromJson(strResponse, MyFavouriteCoursesModel::class.java)
+                        resultRequest(myFavouriteCoursesModel)
+
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                }
+                //error
+                , {
+                    it.printStackTrace()
+                }) {
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val requestHeaders = HashMap<String, String>()
+                    val token_access=userSharedPreferences.getString("token","")
+                    requestHeaders["Authorization"] = "Bearer $token_access";
+                    return requestHeaders
+
+                }
+
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+
+                    return m_params
+                }
+            }//end request register
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
+    }
+
+
+
 
 
 

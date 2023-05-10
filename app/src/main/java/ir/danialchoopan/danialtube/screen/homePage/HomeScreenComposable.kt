@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Card
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -16,6 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -25,18 +27,18 @@ import ir.danialchoopan.danialtube.ui.componets.AutoSlidingCarousel
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
 import ir.danialchoopan.danialtube.ui.componets.courseCardShowComponent
 import ir.danialchoopan.danialtube.viewmodels.HomeScreenViewModel
-import ir.danialchoopan.utils.LoadImageFormURLFixutils
+import ir.danialchoopan.danialtube.utils.LoadImageFormURLFixutils
 
 
-@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalPagerApi::class, ExperimentalGlideComposeApi::class,
+    ExperimentalMaterialApi::class
+)
 @Composable
 fun HomePageScreenScaffoldContent(
-    m_context: Context, homeScreenViewModel: HomeScreenViewModel,
-    onCourseClick:(courseId:Int)->Unit,
-//    onMoreCategoryClick: () -> Unit
-//    onMoreCourseClick: () -> Unit
+    m_context: Context,
+    navController:NavController,
+    homeScreenViewModel: HomeScreenViewModel,
 ) {
-
     var onGoingProgress by remember {
         mutableStateOf(true)
     }
@@ -44,8 +46,8 @@ fun HomePageScreenScaffoldContent(
     if (onGoingProgress) {
         DialogBoxLoading()
     }
+    //end load data
 
-    //end load data new way
     var homePageDataShow by remember { mutableStateOf<HomePageDataModelRequest?>(null) }
 
     val homePageRequestVolley = HomePageRequest(LocalContext.current)
@@ -105,7 +107,10 @@ fun HomePageScreenScaffoldContent(
                         Card(
                             elevation = 2.dp, modifier = Modifier
                                 .width(110.dp)
-                                .height(150.dp)
+                                .height(150.dp),
+                            onClick = {
+                                navController.navigate("subCategory/${categoryItem.id}")
+                            }
                         ) {
                             Column(
                                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -161,7 +166,7 @@ fun HomePageScreenScaffoldContent(
                                 course.subCourseCategories.name,
                                 course.user.name,
                                 course.price.toString(), {
-                                    onCourseClick(course.id)
+                                    navController.navigate("course/${course.id}")
                                     Log.d("course id show 2324536",course.id.toString())
 
                                 })
@@ -177,24 +182,19 @@ fun HomePageScreenScaffoldContent(
             Text(text = "دوره منتخب", modifier = Modifier.padding(15.dp))
             val mostPapularCourse = homePageDataShow!!.coursesWithTeacherMostPopular
 
+
             courseCardShowComponent(
-                mostPapularCourse.thumbnail,
-                mostPapularCourse.nameTitle,
-                mostPapularCourse.subCourseCategories.name,
-                mostPapularCourse.user.name,
-                mostPapularCourse.price.toString(),
-                {
-                    //on click
-                    onCourseClick(mostPapularCourse.id)
+                thumbnail = mostPapularCourse.thumbnail,
+                nameTitle = mostPapularCourse.nameTitle,
+                categoryName = mostPapularCourse.subCourseCategories.name,
+                teacherName = mostPapularCourse.user.name,
+                coursePrice = mostPapularCourse.price.toString(),
+                onClick = {
+                    navController.navigate("course/${mostPapularCourse.id}")
                 },
-                modifierCard = Modifier
-                    .height(150.dp)
-                    .fillMaxWidth()
+                modifierCard = Modifier.fillMaxWidth(),
+                modifierImg = Modifier.fillMaxWidth().height(200.dp)
             )
-
-
-
-
 
             Row(
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -225,7 +225,7 @@ fun HomePageScreenScaffoldContent(
                                 course.price.toString(),
                                 {
                                     //on Click
-                                    onCourseClick(course.id)
+                                    navController.navigate("course/${course.id}")
                                 })
                             Spacer(modifier = Modifier.width(5.dp))
 

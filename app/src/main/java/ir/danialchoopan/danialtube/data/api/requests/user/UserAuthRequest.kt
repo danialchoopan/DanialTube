@@ -59,6 +59,21 @@ class UserAuthRequest(val m_context: Context) {
                 //error
                 , {
                     it.printStackTrace()
+                    resultRequest(
+                        false, RegisterUserResponse(
+                            "",
+                            false,
+                            "",
+                            User(
+                                "",
+                                "",
+                                1,
+                                "",
+                                "",
+                                "",
+                            )
+                        )
+                    )
                 }) {
 
                 override fun getParams(): MutableMap<String, String> {
@@ -120,6 +135,21 @@ class UserAuthRequest(val m_context: Context) {
                 }
                 //error
                 , {
+                    resultRequest(
+                        false, RegisterUserResponse(
+                            "",
+                            false,
+                            "",
+                            User(
+                                "",
+                                "",
+                                1,
+                                "",
+                                "",
+                                "",
+                            )
+                        )
+                    )
                     it.printStackTrace()
                 }) {
 
@@ -134,8 +164,43 @@ class UserAuthRequest(val m_context: Context) {
         VolleySingleTon.getInstance(m_context).addToRequestQueue(str_login_request)
     }
 
-    fun logoutUser() {
+    fun logoutUser(
+        resultRequest: (success: Boolean) -> Unit
+    ) {
+        val str_logout_request =
+            object : StringRequest(Method.POST, RequestEndPoints.userLogout,
+                { strResponse ->
+                    try {
+                        Log.d("logout user response 1365",strResponse)
 
+                        resultRequest(true)
+                        //saving user data on phone
+                        userSharedPreferences.edit().clear().apply()
+
+                    } catch (e: Exception) {
+
+                    }
+                }
+                //error
+                , {
+                    it.printStackTrace()
+                }) {
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val requestHeaders = HashMap<String, String>()
+                    val token_access=userSharedPreferences.getString("token","")
+                    requestHeaders["Authorization"] = "Bearer $token_access";
+                    return requestHeaders
+
+                }
+
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+                    return m_params
+                }
+
+            }//end request register
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_logout_request)
     }
 
     //phone number requests

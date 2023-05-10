@@ -25,9 +25,9 @@ import com.bumptech.glide.integration.compose.GlideImage
 import ir.danialchoopan.danialtube.data.api.model.courseShow.ShowCourse
 import ir.danialchoopan.danialtube.data.api.requests.course.CourseRequest
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
-import ir.danialchoopan.utils.LoadImageFormURLFixutils
-import ir.danialchoopan.utils.bottomBorder
-import ir.danialchoopan.utils.formatPrice
+import ir.danialchoopan.danialtube.utils.LoadImageFormURLFixutils
+import ir.danialchoopan.danialtube.utils.bottomBorder
+import ir.danialchoopan.danialtube.utils.formatPrice
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
 @Composable
@@ -60,7 +60,7 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                         )
                     }
                 },
-                title = { Text("دانیال آموز") })
+                title = { Text("Danial tub") })
         },
         content = {
             //end load data new way
@@ -72,10 +72,9 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                     courseDataShow = showCourse
                 }
             }
-            val courseShowVerticalScroll = rememberScrollState()
-            val courseShowVideosVerticalScroll = rememberScrollState()
             if (courseDataShow != null) {
                 val course = courseDataShow!!.courseWithVideosUser
+
                 LazyColumn(content = {
                     item {
                         Card {
@@ -136,8 +135,6 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                             )
 
                         }
-
-
 
                         Row(
                             verticalAlignment = Alignment.CenterVertically,
