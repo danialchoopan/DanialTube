@@ -53,11 +53,11 @@ fun HomePageScreen(navController: NavController) {
                 },
                 title = { Text("DanialTube") })
         },
-        drawerContent = { drawerContentScaffold(m_context,navController,homeScreenViewModel) },
+        drawerContent = { drawerContentScaffold(m_context, navController, homeScreenViewModel) },
         content = {
             when (bottom_navigation_switch_number) {
                 "home" -> {
-                    HomePageScreenScaffoldContent(m_context,navController, homeScreenViewModel)
+                    HomePageScreenScaffoldContent(m_context, navController, homeScreenViewModel)
                 }//profile
                 "search" -> {
                     searchCourseScreen(navController = navController)
@@ -65,8 +65,12 @@ fun HomePageScreen(navController: NavController) {
                 "profile" -> {
 
                     //user auth
-                    UserAuthScreenLoginRegisterProfile(m_context, homeScreenViewModel,navController){
-                        bottom_navigation_switch_number=it
+                    UserAuthScreenLoginRegisterProfile(
+                        m_context,
+                        homeScreenViewModel,
+                        navController
+                    ) {
+                        bottom_navigation_switch_number = it
                     }
                     //user auth
 
@@ -112,7 +116,7 @@ private fun UserAuthScreenLoginRegisterProfile(
     m_context: Context,
     homeScreenViewModel: HomeScreenViewModel,
     navController: NavController,
-    loginLogoutUser:(bottom:String)->Unit
+    loginLogoutUser: (bottom: String) -> Unit
 ) {
     var is_login by remember {
         mutableStateOf(
@@ -121,30 +125,31 @@ private fun UserAuthScreenLoginRegisterProfile(
     }
     Column(Modifier.fillMaxSize()) {
         if (is_login) {
-            UserProfileScreen(m_context, homeScreenViewModel, navController ){
-                loginLogoutUser(it)
-            }
+            UserProfileScreen(m_context, homeScreenViewModel, navController)
 
         }//user has a login token
         else {
-            LoginRegisterUserScreenSwitch(m_context, homeScreenViewModel){
+            LoginRegisterUserScreenSwitch(m_context, homeScreenViewModel, {
                 loginLogoutUser(it)
-            }
+            }, navController)
 
         }//show login register page
     }
 }
 
 @Composable
-fun drawerContentScaffold(m_context: Context,navController: NavController,
-                          homeScreenViewModel: HomeScreenViewModel) {
+fun drawerContentScaffold(
+    m_context: Context, navController: NavController,
+    homeScreenViewModel: HomeScreenViewModel
+) {
 
     var is_login by remember {
         mutableStateOf(
-            homeScreenViewModel.getUserHasLogin(m_context)
+            m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
+                .getString("has_login", "no_login")  == "has_login"
         )
     }
-    val user_login_data=homeScreenViewModel.getUserLoginData(m_context)
+    val user_login_data = homeScreenViewModel.getUserLoginData(m_context)
 
     val drawerContentColumnScroll = rememberScrollState()
 
@@ -183,38 +188,45 @@ fun drawerContentScaffold(m_context: Context,navController: NavController,
         }
 
         //menu items
-        drawerContentScaffoldMenuItem("خانه",Icons.Default.Home){
+
+        drawerContentScaffoldMenuItem("خانه", Icons.Default.Home) {
+            navController.popBackStack()
+            navController.navigate("home")
 
         }
-        drawerContentScaffoldMenuItem("دسته بندی ها ",Icons.Default.Home){
+
+        drawerContentScaffoldMenuItem("دسته بندی ها ", Icons.Default.Home) {
             navController.navigate("category")
         }
+
         if (is_login) {
-            drawerContentScaffoldMenuItem("دوره های من", Icons.Default.Person){
+            drawerContentScaffoldMenuItem("دوره های من", Icons.Default.Person) {
                 navController.navigate("myCourses")
 
             }
-            drawerContentScaffoldMenuItem("دوره های موردعلاقه", Icons.Default.Favorite){
+            drawerContentScaffoldMenuItem("دوره های موردعلاقه", Icons.Default.Favorite) {
                 navController.navigate("myFavouriteCourses")
             }
         }
-        drawerContentScaffoldMenuItem("درباره ما",Icons.Default.AccountBox){
 
+        drawerContentScaffoldMenuItem("درباره ما", Icons.Default.AccountBox) {
+            navController.navigate("aboutUs")
         }
-        drawerContentScaffoldMenuItem("حریم خصوصی",Icons.Default.AccountBox){
 
+        drawerContentScaffoldMenuItem("حریم خصوصی", Icons.Default.AccountBox) {
+            navController.navigate("userPrivacy")
         }
-        drawerContentScaffoldMenuItem("خروج",Icons.Default.ExitToApp){
+
+        drawerContentScaffoldMenuItem("خروج", Icons.Default.ExitToApp) {
             //work on this a little bit dose not work right know
             ActivityCompat.finishAffinity(m_context as Activity)
         }
-
 
     }
 }
 
 @Composable
-fun drawerContentScaffoldMenuItem(title:String,icon:ImageVector,onClick:()->Unit){
+fun drawerContentScaffoldMenuItem(title: String, icon: ImageVector, onClick: () -> Unit) {
 
     Row(
         horizontalArrangement = Arrangement.Start,

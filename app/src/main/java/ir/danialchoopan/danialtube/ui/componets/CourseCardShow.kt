@@ -3,7 +3,13 @@ package ir.danialchoopan.danialtube.ui.componets
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Icon
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -91,6 +97,105 @@ fun courseCardShowComponent(
 
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
 @Composable
+fun courseCardShowListComponent(
+    thumbnail: String,
+    nameTitle: String,
+    categoryName: String,
+    teacherName: String,
+    coursePrice: String,
+    onClick: () -> Unit,
+    modifierCard: Modifier = Modifier,
+//    modifierImg: Modifier = Modifier
+) {
+    Card(
+        elevation = 2.dp, modifier = modifierCard
+            .fillMaxWidth()
+            .padding(5.dp),
+        onClick = {
+            onClick()
+        }
+    ) {
+
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            GlideImage(
+                model = LoadImageFormURLFixutils(
+                    thumbnail
+                ),
+                contentScale = ContentScale.Fit,
+                contentDescription = "",
+                modifier = Modifier
+                    .width(150.dp)
+                    .fillMaxHeight()
+            )
+
+            Column(modifier = Modifier.padding(15.dp)) {
+
+                Text(
+                    text = nameTitle,
+                    color = Color.DarkGray,
+                    fontSize = 16.sp
+                )
+//                Row(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    verticalAlignment = Alignment.CenterVertically,
+//                    horizontalArrangement = Arrangement.SpaceBetween
+//                ) {
+//                    Text(
+//                        text = nameTitle,
+//                        color = Color.DarkGray,
+//                        fontSize = 16.sp
+//                    )
+////
+////                    Icon(
+////                        imageVector = Icons.Default.FavoriteBorder,
+////                        contentDescription = "",
+////                        tint = Color.Gray,
+//////                        modifier = Modifier.size(70.dp)
+////                    )
+//
+//                }
+                Spacer(modifier = Modifier.height(5.dp))
+
+
+                    Text(
+                        text = categoryName,
+                        color = Color.Gray,
+                        fontSize = 14.sp
+                    )
+
+
+
+                Text(
+                    text = "مدرس : " + teacherName,
+                    color = Color.Gray,
+                    fontSize = 13.sp
+                )
+
+
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
+                    val priceCourse = formatPrice(coursePrice) + " تومان "
+                    Text(
+                        text = priceCourse, color = Color(0xFF2E7D32),
+                        fontSize = 14.sp
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
+@Composable
 fun courseCardShowComponentGrid2(
     thumbnail: String,
     nameTitle: String,
@@ -162,6 +267,40 @@ fun courseCardShowComponentGrid2(
 
                 }
             }
+        }
+    }
+}
+
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
+@Composable
+fun courseCardShowMoreComponent(
+    onClick: () -> Unit,
+    modifierCard: Modifier = Modifier,
+) {
+    Card(
+        elevation = 2.dp, modifier = modifierCard
+            .width(260.dp)
+            .padding(5.dp),
+        onClick = {
+            onClick()
+        }
+    ) {
+        Column(
+            modifier = modifierCard
+                .width(260.dp)
+                .height(255.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "",
+                tint = Color.Gray,
+                modifier = Modifier.size(65.dp)
+            )
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "نمایش دوره های بیشتر", fontSize = 16.sp, color = Color.Gray)
+
         }
     }
 }

@@ -30,14 +30,14 @@ import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
 import ir.danialchoopan.danialtube.ui.componets.courseCardShowComponent
 import ir.danialchoopan.danialtube.viewmodels.HomeScreenViewModel
 import ir.danialchoopan.danialtube.utils.LoadImageFormURLFixutils
+import ir.danialchoopan.danialtube.utils.reloadHomePage
 
 
 @Composable
 fun UserProfileScreen(
     m_context: Context,
     homeScreenViewModel: HomeScreenViewModel,
-    navController: NavController,
-    loginLogoutUser: (bottom: String) -> Unit
+    navController: NavController
 ) {
 
     //process
@@ -91,8 +91,8 @@ fun UserProfileScreen(
                     onGoingProgress = true
                     homeScreenViewModel.userLogoutRequest(m_context) {
                         onGoingProgress = false
+                        reloadHomePage(navController)
                     }
-                    loginLogoutUser("home")
                 }) {
                     Icon(
                         imageVector = Icons.Default.ExitToApp,

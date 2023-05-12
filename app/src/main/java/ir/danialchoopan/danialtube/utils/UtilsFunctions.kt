@@ -7,14 +7,23 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.navigation.NavController
 import ir.danialchoopan.danialtube.data.api.RequestEndPoints
 import java.text.DecimalFormat
 
+
+//fix url
 fun LoadImageFormURLFixutils(img:String):String{
     return RequestEndPoints.storageLoad +img.replace(
         "\\",
         "/"
     )
+}
+
+//reload
+fun reloadHomePage(navController: NavController){
+    navController.popBackStack()
+    navController.navigate("home")
 }
 
 //format numbers

@@ -24,6 +24,7 @@ import ir.danialchoopan.danialtube.data.api.model.courseShow.ShowCourse
 import ir.danialchoopan.danialtube.data.api.requests.course.CourseRequest
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
 import ir.danialchoopan.danialtube.ui.componets.courseCardShowComponent
+import ir.danialchoopan.danialtube.ui.componets.courseCardShowListComponent
 
 @Composable
 fun searchCourseScreen(navController: NavController) {
@@ -120,8 +121,11 @@ fun searchCourseScreen(navController: NavController) {
                 }else {
                     LazyColumn(
                         modifier = Modifier.fillMaxSize(), content = {
+                            item {
+                                 Spacer(modifier = Modifier.height(5.dp))
+                            }
                             items(courseDataSearch!!.courseWithVideosUserSearch) { course ->
-                                courseCardShowComponent(
+                                courseCardShowListComponent(
                                     thumbnail = course.thumbnail,
                                     nameTitle = course.nameTitle,
                                     categoryName = course.subCourseCategories.name,
@@ -130,8 +134,6 @@ fun searchCourseScreen(navController: NavController) {
                                     onClick = {
                                         navController.navigate("course/${course.id}")
                                     },
-                                    modifierCard = Modifier.fillMaxWidth(),
-                                    modifierImg = Modifier.fillMaxWidth().height(200.dp)
                                 )
                             }
                         })

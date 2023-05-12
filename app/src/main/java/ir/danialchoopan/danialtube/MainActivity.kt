@@ -26,12 +26,17 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ir.danialchoopan.danialtube.screen.HomePageScreen
+import ir.danialchoopan.danialtube.screen.about.AboutUsScreen
 import ir.danialchoopan.danialtube.screen.category.ShowAllCategoryScreen
 import ir.danialchoopan.danialtube.screen.category.ShowAllCourseSubCategoryScreen
 import ir.danialchoopan.danialtube.screen.category.ShowAllSubCategoryScreen
+import ir.danialchoopan.danialtube.screen.category.homePageCategory.homePageCategoryScreen
 import ir.danialchoopan.danialtube.screen.course.myCoursesScreen
 import ir.danialchoopan.danialtube.screen.course.myFavouriteCoursesScreen
 import ir.danialchoopan.danialtube.screen.course.showCourseScreen
+import ir.danialchoopan.danialtube.screen.homePage.courseMore.bestSellingCourseScreen
+import ir.danialchoopan.danialtube.screen.homePage.courseMore.morePoplarCourseScreen
+import ir.danialchoopan.danialtube.screen.privacy.PrivacyUsersScreen
 import ir.danialchoopan.danialtube.ui.theme.DanialTubeTheme
 import kotlinx.coroutines.launch
 
@@ -39,7 +44,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-
             val navController= rememberNavController()
 
             DanialTubeTheme {
@@ -48,27 +52,39 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController
                         ,startDestination ="home"){
 
+
                         composable("home"){
                             HomePageScreen(navController)
                         }
 
-                        //course
+                        //course's screen
                         composable("course/{courseId}"){navBackStackEntry->
                             val courseId= navBackStackEntry.arguments!!.getString("courseId")
                             showCourseScreen(navController,course_id = courseId.toString())
                         }
 
                         composable("myCourses"){
-
                             myCoursesScreen(navController)
                         }
 
                         composable("myFavouriteCourses"){
-
                             myFavouriteCoursesScreen(navController)
                         }
 
 
+                        //more course's screen
+                        composable("morePoplarCourse"){
+                            morePoplarCourseScreen(navController)
+                        }
+
+                        composable("bestSellingCourse"){
+                             bestSellingCourseScreen(navController)
+                        }
+
+
+                        //end course screen
+
+                        //category's screen
                         composable("category"){
                             ShowAllCategoryScreen(navController)
                         }
@@ -78,12 +94,28 @@ class MainActivity : ComponentActivity() {
                             ShowAllSubCategoryScreen(navController,category_id = courseId.toString())
                         }
 
+                        composable("homePageCategory/{category_id}"){navBackStackEntry->
+                            val courseId= navBackStackEntry.arguments!!.getString("category_id")
+                            homePageCategoryScreen(navController,category_id = courseId.toString())
+                        }
+
+
                         composable("subCategoryCourse/{sub_category_id}"){navBackStackEntry->
                             val courseId= navBackStackEntry.arguments!!.getString("sub_category_id")
                             ShowAllCourseSubCategoryScreen(navController,sub_category_id = courseId.toString())
                         }
+                        //end category screen
 
-                        //end course
+
+                        //drawer menu
+                        composable("aboutUs"){
+                            AboutUsScreen(navController)
+                        }
+
+                        composable("userPrivacy"){
+                            PrivacyUsersScreen(navController)
+                        }
+
 
 
                     }

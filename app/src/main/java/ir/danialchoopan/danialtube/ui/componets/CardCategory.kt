@@ -58,3 +58,41 @@ fun cardCategory(
     }
 }
 
+@OptIn(ExperimentalMaterialApi::class, ExperimentalGlideComposeApi::class)
+@Composable
+fun cardCategoryRow(
+    category_name:String,
+    category_icon:String,
+    onClick:()->Unit){
+    Card(
+        elevation = 2.dp, modifier = Modifier
+            .fillMaxWidth()
+            .padding(5.dp)
+        ,
+        onClick = {
+            onClick()
+        }
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+
+            GlideImage(
+                model = LoadImageFormURLFixutils(
+                    category_icon
+                ), contentDescription = "",
+                modifier = Modifier.size(60.dp)
+            )
+
+            Column(modifier = Modifier.padding(10.dp)) {
+                Text(
+                    text = category_name,
+                    fontSize = 14.sp,
+                    color = Color.DarkGray
+                )
+            }
+        }
+    }
+}
+

@@ -1,9 +1,11 @@
 package ir.danialchoopan.danialtube.screen.course
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -20,9 +22,10 @@ import ir.danialchoopan.danialtube.data.api.model.myFavouriteCourses.MyFavourite
 import ir.danialchoopan.danialtube.data.api.requests.course.CourseRequest
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
 import ir.danialchoopan.danialtube.ui.componets.courseCardShowComponentGrid2
+import ir.danialchoopan.danialtube.ui.componets.courseCardShowListComponent
 
 @Composable
-fun myFavouriteCoursesScreen(navController: NavController){
+fun myFavouriteCoursesScreen(navController: NavController) {
     //process
     var onGoingProgress by remember {
         mutableStateOf(true)
@@ -62,11 +65,12 @@ fun myFavouriteCoursesScreen(navController: NavController){
             if (myFavouriteCoursesModel != null) {
                 val courses = myFavouriteCoursesModel!!
                 if (myFavouriteCoursesModel!!.isNotEmpty()) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(2),
+
+                    LazyColumn(
                         modifier = Modifier.fillMaxSize(), content = {
-                            items(courses) { course ->
-                                courseCardShowComponentGrid2(
+                            items(courses) {
+                                    course ->
+                                courseCardShowListComponent(
                                     thumbnail = course.course.thumbnail,
                                     nameTitle = course.course.nameTitle,
                                     categoryName = course.course.subCourseCategories.name,
@@ -74,15 +78,12 @@ fun myFavouriteCoursesScreen(navController: NavController){
                                     coursePrice = course.course.price.toString(),
                                     onClick = {
                                         navController.navigate("course/${course.id}")
-                                    },
-                                    modifierCard = Modifier.fillMaxWidth(),
-                                    modifierImg = Modifier
-                                        .fillMaxWidth()
-                                        .height(150.dp)
+                                    }
                                 )
+
                             }
-                        }
-                    )
+                        })
+
                 } else {
                     Column(
                         modifier = Modifier.fillMaxSize(),

@@ -20,7 +20,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
+import ir.danialchoopan.danialtube.utils.reloadHomePage
 import ir.danialchoopan.danialtube.viewmodels.HomeScreenViewModel
 import kotlin.math.log
 
@@ -28,8 +30,11 @@ import kotlin.math.log
 @Composable
 fun LoginRegisterUserScreenSwitch(
     m_context: Context, homeScreenViewModel: HomeScreenViewModel,
-    loginLogoutUser: (bottom: String) -> Unit
+    loginLogoutUser: (bottom: String) -> Unit,
+    navController:NavController
 ) {
+    val registerScroll= rememberScrollState()
+
     var login_Screen_switch by remember {
         mutableStateOf(true)
     }
@@ -38,7 +43,7 @@ fun LoginRegisterUserScreenSwitch(
             login_Screen_switch = login
         },{
             //login success
-            loginLogoutUser(it)
+            reloadHomePage(navController)
         })
 
     } else {
@@ -46,8 +51,8 @@ fun LoginRegisterUserScreenSwitch(
             login_Screen_switch = login
         },{
             //register success
-            loginLogoutUser(it)
-        })
+            reloadHomePage(navController)
+        },Modifier.verticalScroll(registerScroll))
     }
 }
 
@@ -196,7 +201,8 @@ fun LoginUserProfileScreen(
 fun RegisterUserProfileScreen(
     m_context: Context, homeScreenViewModel: HomeScreenViewModel,
     onButtonLoginSwitchClick: (login: Boolean) -> Unit,
-    loginLogoutUser: (bottom: String) -> Unit
+    loginLogoutUser: (bottom: String) -> Unit,
+    modifier:Modifier=Modifier
 ) {
 
     //text box
@@ -389,7 +395,7 @@ fun RegisterUserProfileScreen(
                         passwordRegisterTextBox = ""
                         rePasswordRegisterTextBox = ""
                     } else {
-                        Toast.makeText(m_context, "not match passwords", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(m_context, "رمز عبور انتخابی شما با تکرار آن برار نیست ", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Toast.makeText(
@@ -401,7 +407,11 @@ fun RegisterUserProfileScreen(
             }) {
             Text(text = "نام نویسی", modifier = Modifier.padding(10.dp), fontSize = 19.sp)
         }
-        Spacer(modifier = Modifier.height(15.dp))
+
+        Text(text = "شرایط استفاده از خدمات و حریم خصوصی را میپذیرم", fontSize = 13.sp, color = Color.LightGray,
+            modifier = Modifier.padding(5.dp)
+            )
+        Spacer(modifier = Modifier.height(5.dp))
         Text(
             text = "ورود به حساب کاربری ", fontSize = 16.sp,
             modifier = Modifier
@@ -411,6 +421,9 @@ fun RegisterUserProfileScreen(
 
                 }, color = Color.Blue
         )
+
+
+        Spacer(modifier = Modifier.height(200.dp))
 
     }
 }

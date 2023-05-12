@@ -1,4 +1,4 @@
-package ir.danialchoopan.danialtube.screen.category
+package ir.danialchoopan.danialtube.screen.homePage.courseMore
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -16,13 +16,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import ir.danialchoopan.danialtube.data.api.model.courseShowCategory.ShowCategoriesCourse
-import ir.danialchoopan.danialtube.data.api.requests.category.CourseCategoryRequest
+import ir.danialchoopan.danialtube.data.api.model.moreBestSelling.MoreBestSellingCourseModel
+import ir.danialchoopan.danialtube.data.api.model.moreMostPopular.MorePopularCourseModel
+import ir.danialchoopan.danialtube.data.api.requests.course.CourseRequest
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
 import ir.danialchoopan.danialtube.ui.componets.courseCardShowComponentGrid2
 
+
 @Composable
-fun ShowAllCourseSubCategoryScreen(navController: NavController,sub_category_id:String){
+fun morePoplarCourseScreen(navController: NavController){
     //process
     var onGoingProgress by remember {
         mutableStateOf(true)
@@ -45,23 +47,23 @@ fun ShowAllCourseSubCategoryScreen(navController: NavController,sub_category_id:
                         )
                     }
                 },
-                title = { Text("دوره های دسته بندی") })
+                title = { Text("محبوب ترین دوره ها") })
         },
         content = {
             //end load data new way
-            var courseCategories by remember { mutableStateOf<ShowCategoriesCourse?>(null) }
+            var morePopularCourseModel by remember { mutableStateOf<MorePopularCourseModel?>(null) }
 
-            val courseCategoryRequestVolley = CourseCategoryRequest(LocalContext.current)
+            val CourseRequestVolley = CourseRequest(LocalContext.current)
             LaunchedEffect(Unit) {
-                courseCategoryRequestVolley.getSubCategoryCourse(sub_category_id) {
-                    courseCategories = it
+                CourseRequestVolley.ShowMorePopularCourses {
+                    morePopularCourseModel = it
                 }
             }
 
 
-            if (courseCategories != null) {
-                val courses = courseCategories!!.subCourseCategoriesCourses
-                if (courses.isNotEmpty()) {
+            if (morePopularCourseModel != null) {
+                val courses = morePopularCourseModel!!
+                if (morePopularCourseModel!!.isNotEmpty()) {
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(2),
                         modifier = Modifier.fillMaxSize(), content = {
@@ -90,7 +92,7 @@ fun ShowAllCourseSubCategoryScreen(navController: NavController,sub_category_id:
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "دوره ای برای این دسته بندی تعریف نشده است",
+                            text = "لیست دوره ها خالی است ",
                             color = Color.Gray,
                             fontSize = 19.sp
                         )
