@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.GlideImage
+import ir.danialchoopan.danialtube.data.api.model.User
 import ir.danialchoopan.danialtube.data.api.model.courseSearch.SearchCourseModel
 import ir.danialchoopan.danialtube.data.api.model.myCourses.MyCoursesModel
 import ir.danialchoopan.danialtube.data.api.model.myFavouriteCourses.MyFavouriteCoursesModel
@@ -49,7 +50,18 @@ fun UserProfileScreen(
         DialogBoxLoading()
     }
 
-    val userData = homeScreenViewModel.getUserLoginData(m_context)
+    val userSharedPreferences =
+        m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
+    val userData = User(
+        "",
+        userSharedPreferences.getString("email", "").toString(),
+        userSharedPreferences.getInt("id", 1),
+        userSharedPreferences.getString("name", "").toString(),
+        userSharedPreferences.getString("phone", "").toString(),
+        ""
+    )
+
+//    val userData = homeScreenViewModel.getUserLoginData(m_context)
     val rememberColumnScroll = rememberScrollState()
     Column(
         modifier = Modifier
@@ -102,14 +114,34 @@ fun UserProfileScreen(
                     )
                 }
             }
-            OutlinedButton(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 10.dp), onClick = {
+            Row(
+                Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
-                    //edit user data
-                }) {
-                Text(text = "ویرایش حساب کاربری", fontSize = 18.sp)
+                OutlinedButton(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(10.dp), onClick = {
+                        navController.navigate(
+                            "userEditPasswordEmail"
+                        )
+                        //edit user data
+                    }) {
+                    Text(text = "ویرایش اطلاعات کاربری", fontSize = 18.sp)
+                }
+//                OutlinedButton(
+//                    modifier = Modifier
+//                        .padding(10.dp), onClick = {
+//                        navController.navigate(
+//                            "userEditPasswordEmail"
+//                        )
+//                        //edit user data
+//                    }) {
+//                    Text(text = "ویرایش پروفایل", fontSize = 18.sp)
+//                }
             }
         }
 
@@ -217,7 +249,7 @@ fun UserProfileScreen(
                         navController.navigate("myFavouriteCourses")
                     })
                 }
-            }else{
+            } else {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()

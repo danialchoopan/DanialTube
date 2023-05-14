@@ -8,6 +8,7 @@ import ir.danialchoopan.danialtube.data.api.RequestEndPoints
 import ir.danialchoopan.danialtube.data.api.VolleySingleTon
 import ir.danialchoopan.danialtube.data.api.model.RegisterUserResponse
 import ir.danialchoopan.danialtube.data.api.model.User
+import ir.danialchoopan.danialtube.data.api.model.userEditPassword.UserEditResponse
 
 class UserAuthRequest(val m_context: Context) {
     val userSharedPreferences = m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
@@ -199,14 +200,74 @@ class UserAuthRequest(val m_context: Context) {
                     return m_params
                 }
 
-            }//end request register
+            }
         VolleySingleTon.getInstance(m_context).addToRequestQueue(str_logout_request)
     }
 
-    //phone number requests
-    fun requestCheckPhoneVerify() {
 
+    //edit user email password
+
+    fun userEditPasswordEdit(
+        name: String,
+        email: String,
+        oldPassword:String,
+        newPassword:String,
+        success: () -> Unit,
+        failed: () -> Unit
+    ) {
+        val str_request =
+            object : StringRequest(Method.POST, RequestEndPoints.userEditPasswordEdit,
+                { strResponse ->
+                    try {
+                        val responseRequest=Gson().fromJson(strResponse, UserEditResponse::class.java)
+
+                        userSharedPreferences.edit().also {
+                            it.putInt("id", responseRequest.id)
+                            it.putString("name", responseRequest.name)
+                            it.putString("email", responseRequest.email)
+                            it.putString("phone", responseRequest.phoneNumber)
+                        }.apply()
+                        if(responseRequest.email.isEmpty() || responseRequest.email == null){
+                            failed()
+                        }else{
+                            success()
+                        }
+                    } catch (e: Exception) {
+                        failed()
+                    }
+                }
+                //error
+                , {
+                    it.printStackTrace()
+                    failed()
+
+                }) {
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val requestHeaders = HashMap<String, String>()
+                    val token_access=userSharedPreferences.getString("token","")
+                    requestHeaders["Authorization"] = "Bearer $token_access";
+                    return requestHeaders
+
+                }
+
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+                    m_params["m_name"]=name
+                    m_params["email"]=email
+                    m_params["oldPassword"]=oldPassword
+                    m_params["newPassword"]=newPassword
+                    return m_params
+                }
+
+            }
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
     }
+
+    //end edit user email password
+
+
+    //phone number requests
 
     fun requestSmsValidationCode() {
 
@@ -216,7 +277,7 @@ class UserAuthRequest(val m_context: Context) {
 
     }
 
-    fun checkSmsValidation() {
+    fun checkPhoneNumberIfValid() {
 
     }
     //end phone requests

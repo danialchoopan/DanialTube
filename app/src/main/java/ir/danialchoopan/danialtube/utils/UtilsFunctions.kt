@@ -51,3 +51,48 @@ fun Modifier.bottomBorder(strokeWidth: Dp, color: Color) = composed(
         }
     }
 )
+
+fun isValidEmail(email: String): Boolean {
+    if (email.isEmpty()) {
+        return false
+    }
+
+    val index = email.indexOf("@")
+    if (index == -1) {
+        return false
+    }
+
+    val localPart = email.substring(0, index)
+    val domain = email.substring(index + 1)
+
+    if (!localPart.matches(Regex("^[a-zA-Z0-9_.]+$"))) {
+        return false
+    }
+
+    if (!domain.matches(Regex("^[a-zA-Z0-9]+\\.[a-zA-Z]{2,}$"))) {
+        return false
+    }
+    return true
+}
+
+fun isValidPhoneNumber(phoneNumber: String): Boolean {
+
+    if (phoneNumber.isEmpty()) {
+        return false
+    }
+
+    if (phoneNumber.length != 11) {
+        return false
+    }
+
+    if (!phoneNumber.startsWith("09")) {
+        return false
+    }
+
+    val regex = Regex("^09[0-9]{9}$")
+    if (!regex.matches(phoneNumber)) {
+        return false
+    }
+
+    return true
+}

@@ -18,10 +18,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
+import ir.danialchoopan.danialtube.utils.isValidEmail
+import ir.danialchoopan.danialtube.utils.isValidPhoneNumber
 import ir.danialchoopan.danialtube.utils.reloadHomePage
 import ir.danialchoopan.danialtube.viewmodels.HomeScreenViewModel
 import kotlin.math.log
@@ -68,8 +72,15 @@ fun LoginUserProfileScreen(
     var emailOrPhoneLoginTextBox by remember {
         mutableStateOf("")
     }
+
+    var emailOrPhoneLoginTextBoxError by remember {
+        mutableStateOf(false)
+    }
     var passwordLoginTextBox by remember {
         mutableStateOf("")
+    }
+    var passwordLoginTextBoxError by remember {
+        mutableStateOf(false)
     }
     //other variables
     var onGoingProgress by remember {
@@ -97,6 +108,7 @@ fun LoginUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 emailOrPhoneLoginTextBox = it
+                emailOrPhoneLoginTextBoxError=false
             },
             leadingIcon =
             {
@@ -106,7 +118,7 @@ fun LoginUserProfileScreen(
                 )
             },
             label = { Text(text = "شماره همراه - پست الکترونیک") },
-            isError = false,
+            isError = emailOrPhoneLoginTextBoxError,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
@@ -121,6 +133,7 @@ fun LoginUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 passwordLoginTextBox = it
+                passwordLoginTextBoxError=false
             },
             leadingIcon =
             {
@@ -130,20 +143,23 @@ fun LoginUserProfileScreen(
                 )
             },
             label = { Text(text = "رمزعبور") },
-            isError = false,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { }
-            )
+            isError = passwordLoginTextBoxError,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = PasswordVisualTransformation()
         )
 
         Spacer(modifier = Modifier.height(15.dp))
         Button(
             modifier = Modifier.fillMaxWidth(), onClick = {
 
-                if (emailOrPhoneLoginTextBox.isNotEmpty() && passwordLoginTextBox.isNotEmpty()) {
+                emailOrPhoneLoginTextBoxError=emailOrPhoneLoginTextBox.isEmpty()
+                passwordLoginTextBoxError=passwordLoginTextBox.isEmpty()
+
+                if (
+                    emailOrPhoneLoginTextBox.isNotEmpty() &&
+                    passwordLoginTextBox.isNotEmpty()
+
+                ) {
 
                     onGoingProgress = true
 
@@ -209,17 +225,36 @@ fun RegisterUserProfileScreen(
     var nameRegisterTextBox by remember {
         mutableStateOf("")
     }
+    var nameRegisterTextBoxError by remember {
+        mutableStateOf(false)
+    }
     var phoneRegisterTextBox by remember {
         mutableStateOf("")
+    }
+
+    var phoneRegisterTextBoxError by remember {
+        mutableStateOf(false)
     }
     var emailRegisterTextBox by remember {
         mutableStateOf("")
     }
+
+    var emailRegisterTextBoxError by remember {
+        mutableStateOf(false)
+    }
     var passwordRegisterTextBox by remember {
         mutableStateOf("")
     }
+
+    var passwordRegisterTextBoxError by remember {
+        mutableStateOf(false)
+    }
     var rePasswordRegisterTextBox by remember {
         mutableStateOf("")
+    }
+
+    var rePasswordRegisterTextBoxError by remember {
+        mutableStateOf(false)
     }
 
     //other variables
@@ -248,6 +283,7 @@ fun RegisterUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 nameRegisterTextBox = it
+                nameRegisterTextBoxError=false
             },
             label = { Text(text = "نام نمایشی") },
             leadingIcon =
@@ -257,7 +293,7 @@ fun RegisterUserProfileScreen(
                     contentDescription = ""
                 )
             },
-            isError = false,
+            isError = nameRegisterTextBoxError,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
@@ -272,6 +308,7 @@ fun RegisterUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 emailRegisterTextBox = it
+                emailRegisterTextBoxError=false
             },
             label = { Text(text = "پست الکترونیک") },
             leadingIcon =
@@ -281,7 +318,7 @@ fun RegisterUserProfileScreen(
                     contentDescription = ""
                 )
             },
-            isError = false,
+            isError = emailRegisterTextBoxError,
             keyboardOptions = KeyboardOptions.Default.copy(
                 imeAction = ImeAction.Done
             ),
@@ -296,6 +333,7 @@ fun RegisterUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 phoneRegisterTextBox = it
+                phoneRegisterTextBoxError=false
             },
             label = { Text(text = "شماره همراه") },
             leadingIcon =
@@ -305,21 +343,19 @@ fun RegisterUserProfileScreen(
                     contentDescription = ""
                 )
             },
-            isError = false,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { }
-            )
+            isError = phoneRegisterTextBoxError,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+
         )
         Spacer(modifier = Modifier.height(5.dp))
+
         OutlinedTextField(
             value = passwordRegisterTextBox,
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 passwordRegisterTextBox = it
+                passwordRegisterTextBoxError=false
             },
             label = { Text(text = "رمزعبور") },
             leadingIcon =
@@ -329,21 +365,19 @@ fun RegisterUserProfileScreen(
                     contentDescription = ""
                 )
             },
-            isError = false,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { }
-            )
+            isError = passwordRegisterTextBoxError,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = PasswordVisualTransformation()
         )
         Spacer(modifier = Modifier.height(5.dp))
+
         OutlinedTextField(
             value = rePasswordRegisterTextBox,
             singleLine = true,
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 rePasswordRegisterTextBox = it
+                rePasswordRegisterTextBoxError=false
             },
             leadingIcon =
             {
@@ -353,24 +387,37 @@ fun RegisterUserProfileScreen(
                 )
             },
             label = { Text(text = "تکرار رمزعبور") },
-            isError = false,
-            keyboardOptions = KeyboardOptions.Default.copy(
-                imeAction = ImeAction.Done
-            ),
-            keyboardActions = KeyboardActions(
-                onDone = { }
-            )
+            isError = rePasswordRegisterTextBoxError,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+            visualTransformation = PasswordVisualTransformation()
         )
 
         Spacer(modifier = Modifier.height(10.dp))
         Button(
             modifier = Modifier.fillMaxWidth(), onClick = {
+                nameRegisterTextBoxError=nameRegisterTextBox.isEmpty()
+                emailRegisterTextBoxError=emailRegisterTextBox.isEmpty()
+                phoneRegisterTextBoxError=phoneRegisterTextBox.isEmpty()
+                passwordRegisterTextBoxError=passwordRegisterTextBox.isEmpty()
+                rePasswordRegisterTextBoxError=rePasswordRegisterTextBox.isEmpty()
+
+                if(!isValidEmail(emailRegisterTextBox)){
+                    emailRegisterTextBoxError=true
+                }
+                if(!isValidPhoneNumber(phoneRegisterTextBox)){
+                    phoneRegisterTextBoxError=true
+                }
+
                 if (nameRegisterTextBox.isNotEmpty() &&
                     emailRegisterTextBox.isNotEmpty() &&
                     phoneRegisterTextBox.isNotEmpty() &&
                     passwordRegisterTextBox.isNotEmpty() &&
-                    rePasswordRegisterTextBox.isNotEmpty()
+                    rePasswordRegisterTextBox.isNotEmpty() &&
+                    isValidEmail(emailRegisterTextBox) &&
+                    isValidPhoneNumber(phoneRegisterTextBox)
                 ) {
+
+
                     if (passwordRegisterTextBox == rePasswordRegisterTextBox) {
                         onGoingProgress = true
                         homeScreenViewModel.userRegisterRequest(
@@ -395,6 +442,8 @@ fun RegisterUserProfileScreen(
                         passwordRegisterTextBox = ""
                         rePasswordRegisterTextBox = ""
                     } else {
+                        passwordRegisterTextBoxError=true
+                        rePasswordRegisterTextBoxError=true
                         Toast.makeText(m_context, "رمز عبور انتخابی شما با تکرار آن برار نیست ", Toast.LENGTH_SHORT).show()
                     }
                 } else {
@@ -421,7 +470,6 @@ fun RegisterUserProfileScreen(
 
                 }, color = Color.Blue
         )
-
 
         Spacer(modifier = Modifier.height(200.dp))
 

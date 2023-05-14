@@ -83,4 +83,8 @@ dependencies {
     //slider
     implementation 'com.google.accompanist:accompanist-pager:0.22.0-rc'
 
+    //more icons
+    implementation "androidx.compose.material:material-icons-extended:$compose_ui_version"
+
+
 }

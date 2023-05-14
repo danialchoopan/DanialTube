@@ -14,6 +14,9 @@ object RequestEndPoints {
     val userCheckPhoneValidation = "$rootDomainApi/user/phone/valid" //token
     val userSendVerifyCode = "$rootDomainApi/user/phone/code" //token
 
+    val userEditPasswordEdit = "$rootDomainApi/user/edit/password/email" //token
+
+
     //user course
     val userCourseTransaction = "$rootDomainApi/user/profile/course/transaction" //token
     val userCourseFavorites = "$rootDomainApi/user/profile/course/favorites" //token

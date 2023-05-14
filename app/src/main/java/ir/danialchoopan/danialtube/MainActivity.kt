@@ -37,6 +37,8 @@ import ir.danialchoopan.danialtube.screen.course.showCourseScreen
 import ir.danialchoopan.danialtube.screen.homePage.courseMore.bestSellingCourseScreen
 import ir.danialchoopan.danialtube.screen.homePage.courseMore.morePoplarCourseScreen
 import ir.danialchoopan.danialtube.screen.privacy.PrivacyUsersScreen
+import ir.danialchoopan.danialtube.screen.user.EditUserDataScreen
+import ir.danialchoopan.danialtube.screen.user.ValidatePhoneNumberScreen
 import ir.danialchoopan.danialtube.ui.theme.DanialTubeTheme
 import kotlinx.coroutines.launch
 
@@ -50,7 +52,7 @@ class MainActivity : ComponentActivity() {
                 //app route
                 RightToLeftLayout {
                     NavHost(navController = navController
-                        ,startDestination ="home"){
+                        ,startDestination ="ValidatePhoneNumberScreen"){
 
 
                         composable("home"){
@@ -115,6 +117,17 @@ class MainActivity : ComponentActivity() {
                         composable("userPrivacy"){
                             PrivacyUsersScreen(navController)
                         }
+
+                        //edit user screen
+                        composable("userEditPasswordEmail"){
+                            EditUserDataScreen(navController)
+                        }
+
+                        //send code screen
+                        composable("ValidatePhoneNumberScreen"){
+                            ValidatePhoneNumberScreen(navController)
+                        }
+
 
 
 
