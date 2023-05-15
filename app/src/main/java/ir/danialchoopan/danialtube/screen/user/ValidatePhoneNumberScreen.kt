@@ -28,6 +28,8 @@ import androidx.navigation.NavController
 import ir.danialchoopan.danialtube.data.api.requests.user.UserAuthRequest
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
 import ir.danialchoopan.danialtube.viewmodels.HomeScreenViewModel
+import kotlinx.coroutines.delay
+import java.text.SimpleDateFormat
 
 
 @Composable
@@ -76,7 +78,21 @@ fun ValidatePhoneNumberScreen(navController: NavController) {
                 mutableStateOf(false)
             }
 
+            var sendAgainButtonEnabled by remember {
+                mutableStateOf(false)
+            }
+
+            var requestMessage by remember {
+                mutableStateOf("")
+            }
+
             val userAuthRequest = UserAuthRequest(LocalContext.current)
+
+            userAuthRequest.requestSmsValidationCode({ message ->
+                requestMessage = message
+            }, {
+                requestMessage = "مشکلی پیش آمده است لطفا بعدا دوباره امتحان کنید!"
+            })
 
             val verticalScroll = rememberScrollState()
 
@@ -89,10 +105,13 @@ fun ValidatePhoneNumberScreen(navController: NavController) {
             ) {
                 Spacer(modifier = Modifier.height(30.dp))
 
-                val userPhoneNumber = "0933 444 66 22"
+                val userPhoneNumber = user_saved_data.getString("phone", "")
                 Text(
                     text = "کد تایید برای شما به شماره ($userPhoneNumber) ارسال شده است",
                     color = Color.Gray
+                )
+                Text(
+                    text = requestMessage
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 OutlinedTextField(
@@ -122,12 +141,16 @@ fun ValidatePhoneNumberScreen(navController: NavController) {
                 ) {
                     Button(
                         onClick = {
-                            phoneNumberValidCodeTextEditError=phoneNumberValidCodeTextEdit.isEmpty()
-                            if (phoneNumberValidCodeTextEdit.isNotEmpty()) {
 
-                            }
+                            userAuthRequest.requestSmsValidationCode({ message ->
+                                requestMessage = message
+                            }, {
+                                requestMessage = "مشکلی پیش آمده است لطفا بعدا امتحان کنید!"
+                            })
+
+                            sendAgainButtonEnabled = false
                         },
-                        enabled = false
+                        enabled = sendAgainButtonEnabled
                     ) {
 
                         Text(text = "ارسال دوباره کد", fontSize = 16.sp)
@@ -137,6 +160,25 @@ fun ValidatePhoneNumberScreen(navController: NavController) {
                         modifier = Modifier.width(100.dp),
                         onClick = {
 
+                            phoneNumberValidCodeTextEditError =
+                                phoneNumberValidCodeTextEdit.isEmpty()
+                            if (phoneNumberValidCodeTextEdit.isNotEmpty()) {
+                                userAuthRequest.sendRequestSmsValidationCode(
+                                    phoneNumberValidCodeTextEdit,
+                                    { message, success ->
+                                        if (success) {
+                                            navController.navigate("home") {
+                                                popUpTo(0)
+                                            }
+                                            Toast.makeText(m_context,message,Toast.LENGTH_SHORT).show()
+                                        }
+                                        requestMessage = message
+                                    },
+                                    {
+                                        requestMessage =
+                                            "مشکلی پیش آمده است لطفا بعدا دوباره امتحان کنید کد شما ارسال نشد !"
+                                    })
+                            }
                         }) {
 
                         Text(text = "ارسال", fontSize = 16.sp)
@@ -144,10 +186,38 @@ fun ValidatePhoneNumberScreen(navController: NavController) {
 
                 }
                 Spacer(modifier = Modifier.height(10.dp))
-                Text(text = "کد ارسالی برای شما تا 2 دقیقه بعد اعتبار دارد", color = Color.Gray)
+
+                CountdownTimer2Min {
+                    sendAgainButtonEnabled = true
+                }
+
+
                 Spacer(modifier = Modifier.height(350.dp))
 
             }
         }
     )
+}
+
+@Composable
+fun CountdownTimer2Min(
+    timeLeft: Long = 120000,
+    onEnd: () -> Unit
+) {
+    val context = LocalContext.current
+    val timer = remember { mutableStateOf(timeLeft) }
+
+    LaunchedEffect(key1 = timer.value) {
+        while (timer.value > 0) {
+            delay(1000)
+            timer.value -= 1000
+        }
+        onEnd()
+    }
+    val realTime = (timer.value / 1000).toInt()
+    val minutes = realTime / 60
+    val secondsInMinute = realTime % 60
+    val countDownTime = String.format("%d:%02d", minutes, secondsInMinute)
+
+    Text(text = "کد ارسالی برای شما تا $countDownTime بعد اعتبار دارد", color = Color.Gray)
 }

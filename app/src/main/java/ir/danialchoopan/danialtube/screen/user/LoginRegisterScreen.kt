@@ -23,6 +23,7 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import ir.danialchoopan.danialtube.data.api.requests.user.UserAuthRequest
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
 import ir.danialchoopan.danialtube.utils.isValidEmail
 import ir.danialchoopan.danialtube.utils.isValidPhoneNumber
@@ -48,7 +49,7 @@ fun LoginRegisterUserScreenSwitch(
         },{
             //login success
             reloadHomePage(navController)
-        })
+        },navController)
 
     } else {
         RegisterUserProfileScreen(m_context, homeScreenViewModel,{ login ->
@@ -65,7 +66,8 @@ fun LoginUserProfileScreen(
     m_context: Context,
     homeScreenViewModel: HomeScreenViewModel,
     onButtonLoginSwitchClick: (login: Boolean) -> Unit,
-    loginLogoutUser: (bottom: String) -> Unit
+    loginLogoutUser: (bottom: String) -> Unit,
+    navController: NavController
 ) {
     //text box
 
@@ -168,7 +170,7 @@ fun LoginUserProfileScreen(
                         emailOrPhoneLoginTextBox,
                         passwordLoginTextBox
                     ) { success, loginResponse ->
-                        onGoingProgress = false
+
 
                         if (success) {
 
@@ -182,13 +184,24 @@ fun LoginUserProfileScreen(
                                 "خوش آمدی ${loginResponse.user.name} ",
                                 Toast.LENGTH_SHORT
                             ).show()
-                            loginLogoutUser("home")
+                            UserAuthRequest(m_context).checkPhoneNumberIfValid {
+                                if(it){
+                                    loginLogoutUser("home")
+                                }else{
+                                    navController.navigate("ValidatePhoneNumberScreen")
+                                }
+                                onGoingProgress = false
+                            }
+
+
+
                         } else {
                             Toast.makeText(
                                 m_context,
                                 "نام کاربری یا رمز عبور اشتباه است  ",
                                 Toast.LENGTH_SHORT
                             ).show()
+                            onGoingProgress = false
                         }
 
                     }

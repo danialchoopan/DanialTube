@@ -37,6 +37,7 @@ import ir.danialchoopan.danialtube.screen.course.showCourseScreen
 import ir.danialchoopan.danialtube.screen.homePage.courseMore.bestSellingCourseScreen
 import ir.danialchoopan.danialtube.screen.homePage.courseMore.morePoplarCourseScreen
 import ir.danialchoopan.danialtube.screen.privacy.PrivacyUsersScreen
+import ir.danialchoopan.danialtube.screen.splash.splashScreen
 import ir.danialchoopan.danialtube.screen.user.EditUserDataScreen
 import ir.danialchoopan.danialtube.screen.user.ValidatePhoneNumberScreen
 import ir.danialchoopan.danialtube.ui.theme.DanialTubeTheme
@@ -52,8 +53,12 @@ class MainActivity : ComponentActivity() {
                 //app route
                 RightToLeftLayout {
                     NavHost(navController = navController
-                        ,startDestination ="ValidatePhoneNumberScreen"){
+                        ,startDestination ="splashScreen"){
 
+
+                        composable("splashScreen"){
+                            splashScreen(navController)
+                        }
 
                         composable("home"){
                             HomePageScreen(navController)

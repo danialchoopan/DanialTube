@@ -4,11 +4,13 @@ import android.content.Context
 import android.util.Log
 import com.android.volley.toolbox.StringRequest
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import ir.danialchoopan.danialtube.data.api.RequestEndPoints
 import ir.danialchoopan.danialtube.data.api.VolleySingleTon
 import ir.danialchoopan.danialtube.data.api.model.RegisterUserResponse
 import ir.danialchoopan.danialtube.data.api.model.User
 import ir.danialchoopan.danialtube.data.api.model.userEditPassword.UserEditResponse
+import org.json.JSONObject
 
 class UserAuthRequest(val m_context: Context) {
     val userSharedPreferences = m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
@@ -110,7 +112,7 @@ class UserAuthRequest(val m_context: Context) {
                             it.putString("name", responseRequest.user.name)
                             it.putString("email", responseRequest.user.email)
                             it.putString("phone", responseRequest.user.phoneNumber)
-                            it.putString("has_login","has_login")
+                            it.putString("has_login", "has_login")
 
                         }.apply()
 
@@ -172,7 +174,7 @@ class UserAuthRequest(val m_context: Context) {
             object : StringRequest(Method.POST, RequestEndPoints.userLogout,
                 { strResponse ->
                     try {
-                        Log.d("logout user response 1365",strResponse)
+                        Log.d("logout user response 1365", strResponse)
 
                         resultRequest(true)
                         //saving user data on phone
@@ -189,7 +191,7 @@ class UserAuthRequest(val m_context: Context) {
 
                 override fun getHeaders(): MutableMap<String, String> {
                     val requestHeaders = HashMap<String, String>()
-                    val token_access=userSharedPreferences.getString("token","")
+                    val token_access = userSharedPreferences.getString("token", "")
                     requestHeaders["Authorization"] = "Bearer $token_access";
                     return requestHeaders
 
@@ -210,8 +212,8 @@ class UserAuthRequest(val m_context: Context) {
     fun userEditPasswordEdit(
         name: String,
         email: String,
-        oldPassword:String,
-        newPassword:String,
+        oldPassword: String,
+        newPassword: String,
         success: () -> Unit,
         failed: () -> Unit
     ) {
@@ -219,7 +221,8 @@ class UserAuthRequest(val m_context: Context) {
             object : StringRequest(Method.POST, RequestEndPoints.userEditPasswordEdit,
                 { strResponse ->
                     try {
-                        val responseRequest=Gson().fromJson(strResponse, UserEditResponse::class.java)
+                        val responseRequest =
+                            Gson().fromJson(strResponse, UserEditResponse::class.java)
 
                         userSharedPreferences.edit().also {
                             it.putInt("id", responseRequest.id)
@@ -227,9 +230,9 @@ class UserAuthRequest(val m_context: Context) {
                             it.putString("email", responseRequest.email)
                             it.putString("phone", responseRequest.phoneNumber)
                         }.apply()
-                        if(responseRequest.email.isEmpty() || responseRequest.email == null){
+                        if (responseRequest.email.isEmpty() || responseRequest.email == null) {
                             failed()
-                        }else{
+                        } else {
                             success()
                         }
                     } catch (e: Exception) {
@@ -245,7 +248,7 @@ class UserAuthRequest(val m_context: Context) {
 
                 override fun getHeaders(): MutableMap<String, String> {
                     val requestHeaders = HashMap<String, String>()
-                    val token_access=userSharedPreferences.getString("token","")
+                    val token_access = userSharedPreferences.getString("token", "")
                     requestHeaders["Authorization"] = "Bearer $token_access";
                     return requestHeaders
 
@@ -253,10 +256,10 @@ class UserAuthRequest(val m_context: Context) {
 
                 override fun getParams(): MutableMap<String, String> {
                     val m_params = HashMap<String, String>()
-                    m_params["m_name"]=name
-                    m_params["email"]=email
-                    m_params["oldPassword"]=oldPassword
-                    m_params["newPassword"]=newPassword
+                    m_params["m_name"] = name
+                    m_params["email"] = email
+                    m_params["oldPassword"] = oldPassword
+                    m_params["newPassword"] = newPassword
                     return m_params
                 }
 
@@ -269,19 +272,104 @@ class UserAuthRequest(val m_context: Context) {
 
     //phone number requests
 
-    fun requestSmsValidationCode() {
+    fun requestSmsValidationCode(success: (message:String) -> Unit, failed: () -> Unit) {
+        val str_request =
+            object : StringRequest(Method.POST, RequestEndPoints.userRequestPhoneValidCode,
+                { strResponse ->
+                    try {
+                        success(JSONObject(strResponse).getString("message"))
+                    }catch (e : Exception){
+                        failed()
+                    }
 
+                }
+                //error
+                , {
+                    it.printStackTrace()
+                    failed()
+
+                }) {
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val requestHeaders = HashMap<String, String>()
+                    val token_access = userSharedPreferences.getString("token", "")
+                    requestHeaders["Authorization"] = "Bearer $token_access";
+                    return requestHeaders
+                }
+
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+                    return m_params
+                }
+
+            }
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
     }
 
-    fun sendRequestSmsValidationCode() {
+    fun sendRequestSmsValidationCode(code:String,success: (message:String,status:Boolean) -> Unit, failed: () -> Unit) {
+        val str_request =
+            object : StringRequest(Method.POST, RequestEndPoints.userSendPhoneValidCode,
+                { strResponse ->
+                    try {
+                        val jsonObject=JSONObject(strResponse)
+                        success(jsonObject.getString("message"),jsonObject.getBoolean("status"))
+                    }catch (e : Exception){
+                        failed()
+                    }
 
+                }
+                //error
+                , {
+                    it.printStackTrace()
+                    failed()
+
+                }) {
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val requestHeaders = HashMap<String, String>()
+                    val token_access = userSharedPreferences.getString("token", "")
+                    requestHeaders["Authorization"] = "Bearer $token_access";
+                    return requestHeaders
+                }
+
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+                    m_params["code"]=code
+                    return m_params
+                }
+
+            }
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
     }
 
-    fun checkPhoneNumberIfValid() {
+    fun checkPhoneNumberIfValid(success: (result:Boolean) -> Unit) {
+        val str_request =
+            object : StringRequest(Method.POST, RequestEndPoints.userCheckValidPhone,
+                { strResponse ->
+                        success(JSONObject(strResponse).getBoolean("status"))
 
+                }
+                //error
+                , {
+                    it.printStackTrace()
+                }) {
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val requestHeaders = HashMap<String, String>()
+                    val token_access = userSharedPreferences.getString("token", "")
+                    requestHeaders["Authorization"] = "Bearer $token_access";
+                    return requestHeaders
+                }
+
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+                    return m_params
+                }
+
+            }
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
     }
     //end phone requests
-
 
 
 }

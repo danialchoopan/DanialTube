@@ -10,10 +10,12 @@ object RequestEndPoints {
     val userLogin = "$rootDomainApi/auth/login"
     val userLogout = "$rootDomainApi/auth/logout"
 
-    //user requests
-    val userCheckPhoneValidation = "$rootDomainApi/user/phone/valid" //token
-    val userSendVerifyCode = "$rootDomainApi/user/phone/code" //token
+    //user phone sms valid
+    val userRequestPhoneValidCode = "$rootDomainApi/user/phone/send/valid" //token
+    val userSendPhoneValidCode = "$rootDomainApi/user/phone/code" //token
+    val userCheckValidPhone = "$rootDomainApi/user/phone/check/valid" //token
 
+    //edit user
     val userEditPasswordEdit = "$rootDomainApi/user/edit/password/email" //token
 
 
