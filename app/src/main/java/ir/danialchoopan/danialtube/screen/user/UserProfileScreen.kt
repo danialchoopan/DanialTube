@@ -214,7 +214,7 @@ fun UserProfileScreen(
                             course.course.price.toString(),
                             {
                                 //on Click
-                                navController.navigate("course/${course.id}")
+                                navController.navigate("course/${course.courseId}")
                             })
                         Spacer(modifier = Modifier.width(5.dp))
 
@@ -287,7 +287,7 @@ fun UserProfileScreen(
                             course.course.price.toString(),
                             {
                                 //on Click
-                                navController.navigate("course/${course.id}")
+                                navController.navigate("course/${course.courseId}")
                             })
                         Spacer(modifier = Modifier.width(5.dp))
 

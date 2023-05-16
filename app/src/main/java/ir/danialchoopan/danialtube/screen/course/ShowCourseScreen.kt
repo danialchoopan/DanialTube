@@ -1,5 +1,6 @@
 package ir.danialchoopan.danialtube.screen.course
 
+import android.widget.Toast
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -26,6 +27,7 @@ import com.bumptech.glide.integration.compose.GlideImage
 import ir.danialchoopan.danialtube.data.api.model.courseShow.ShowCourse
 import ir.danialchoopan.danialtube.data.api.requests.course.CourseRequest
 import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
+import ir.danialchoopan.danialtube.utils.IsUserLogin
 import ir.danialchoopan.danialtube.utils.LoadImageFormURLFixutils
 import ir.danialchoopan.danialtube.utils.bottomBorder
 import ir.danialchoopan.danialtube.utils.formatPrice
@@ -48,6 +50,16 @@ fun showCourseScreen(navController: NavController, course_id: String) {
         mutableStateOf(false)
     }
 
+    var processFavorite by remember {
+        mutableStateOf(true)
+    }
+
+    var courseFavorite by remember {
+        mutableStateOf(false)
+    }
+    val m_context = LocalContext.current
+    val is_user_login = IsUserLogin(m_context)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -67,18 +79,25 @@ fun showCourseScreen(navController: NavController, course_id: String) {
             //end load data new way
             var courseDataShow by remember { mutableStateOf<ShowCourse?>(null) }
 
-            val CourseRequestVolley = CourseRequest(LocalContext.current)
+            val courseRequestVolley = CourseRequest(LocalContext.current)
             LaunchedEffect(Unit) {
-                CourseRequestVolley.showCourse(course_id) { showCourse ->
+                processFavorite = true
+                courseRequestVolley.showCourse(course_id) { showCourse ->
                     courseDataShow = showCourse
+                    courseRequestVolley.CheckFavoriteCourses(course_id) {
+                        courseFavorite = it
+                        processFavorite=false
+                    }
                 }
             }
             if (courseDataShow != null) {
                 val course = courseDataShow!!.courseWithVideosUser
-                val columnVerticalScroll= rememberScrollState()
-                Column(modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(columnVerticalScroll)) {
+                val columnVerticalScroll = rememberScrollState()
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .verticalScroll(columnVerticalScroll)
+                ) {
 
                     Card {
                         GlideImage(
@@ -144,31 +163,86 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                         horizontalArrangement = Arrangement.SpaceBetween,
                         modifier = Modifier.padding(vertical = 5.dp, horizontal = 10.dp)
                     ) {
-
-                        IconButton(onClick = { }, modifier = Modifier.width(50.dp)) {
-                            Icon(
-                                imageVector = Icons.Default.FavoriteBorder,
-                                contentDescription = "",
-                                tint = Color.Red,
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .scale(2f),
-                            )
+                        if (is_user_login) {
+                            if (processFavorite) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .width(50.dp)
+                                        .padding(10.dp)
+                                )
+                            } else {
+                                if (courseFavorite) {
+                                    IconButton(onClick = {
+                                        processFavorite=true
+                                        courseRequestVolley.RemoveFromFavoriteCourses(course_id){
+                                            processFavorite=false
+                                            courseFavorite=!courseFavorite
+                                        }
+                                    }, modifier = Modifier.width(50.dp)) {
+                                        Icon(
+                                            imageVector = Icons.Default.Favorite,
+                                            contentDescription = "",
+                                            tint = Color.Red,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .scale(2f),
+                                        )
+                                    }
+                                } else {
+                                    IconButton(onClick = {
+                                        processFavorite=true
+                                        courseRequestVolley.AddToFavoriteCourses(course_id){
+                                            processFavorite=false
+                                            courseFavorite=!courseFavorite
+                                        }
+                                    }, modifier = Modifier.width(50.dp)) {
+                                        Icon(
+                                            imageVector = Icons.Default.FavoriteBorder,
+                                            contentDescription = "",
+                                            tint = Color.Red,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .scale(2f),
+                                        )
+                                    }
+                                }
+                            }
                         }
 
                         Button(
                             onClick = {
-
+                                if (is_user_login) {
+                                    //do something with
+                                } else {
+                                    Toast.makeText(
+                                        m_context,
+                                        "لطفا اول وارد حساب کاربری خود شوید.",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .padding(horizontal = 5.dp, vertical = 10.dp)
-                        ) {
-                            Text(
-                                text = "شرکت در دوره", modifier = Modifier
-                                    .padding(5.dp)
-                                    .scale(1.5f)
-                            )
+                                .padding(horizontal = 5.dp, vertical = 10.dp),
+
+                            ) {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.SpaceBetween
+                            ) {
+                                Box(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text = "شرکت در دوره", modifier = Modifier
+                                        .padding(5.dp)
+                                        .scale(1.5f)
+                                )
+                                Icon(
+                                    imageVector = Icons.Default.AddShoppingCart,
+                                    contentDescription = "",
+                                    tint = Color.White,
+                                )
+                            }
                         }
 
                     }
@@ -245,8 +319,7 @@ fun showCourseScreen(navController: NavController, course_id: String) {
 
 //                                    .padding(horizontal = 10.dp, vertical = 15.dp)
                                             .fillMaxWidth()
-                                            .padding(10.dp)
-                                        ,
+                                            .padding(10.dp),
                                         horizontalArrangement = Arrangement.SpaceBetween,
                                         verticalAlignment = Alignment.CenterVertically
                                     ) {
@@ -268,8 +341,7 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                                             imageVector = Icons.Default.Lock,
                                             contentDescription = "",
                                             modifier = Modifier
-                                                .padding(15.dp)
-                                            ,
+                                                .padding(15.dp),
                                             tint = Color.Red
                                         )
 
@@ -319,11 +391,7 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                         )
                     }
 
-
-
-
-
-
+                    //scroll down
                     Box(
                         modifier = Modifier
                             .width(100.dp)

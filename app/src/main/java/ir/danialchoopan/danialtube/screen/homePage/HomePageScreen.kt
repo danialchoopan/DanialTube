@@ -143,7 +143,7 @@ fun drawerContentScaffold(
     homeScreenViewModel: HomeScreenViewModel
 ) {
 
-    var is_login by remember {
+    val is_login by remember {
         mutableStateOf(
             m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
                 .getString("has_login", "no_login")  == "has_login"

@@ -35,12 +35,32 @@ import java.text.SimpleDateFormat
 @Composable
 fun ValidatePhoneNumberScreen(navController: NavController) {
 
+    //context
+    val m_context = LocalContext.current
+
+    var user_saved_data by remember {
+        mutableStateOf(
+            m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
+        )
+    }
+
+    val userAuthRequest = UserAuthRequest(LocalContext.current)
+
     Scaffold(
         topBar = {
             TopAppBar(
                 navigationIcon = {
                     IconButton(onClick = {
-                        navController.popBackStack()
+                        userAuthRequest.logoutUser {
+                            Toast.makeText(
+                                m_context,
+                                "برای ساخت حساب شما باید حساب کاربری خود را تایید کنید",
+                                Toast.LENGTH_LONG
+                            ).show()
+                            navController.navigate("home") {
+                                popUpTo(0)
+                            }
+                        }
                     }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack, contentDescription = "",
@@ -52,9 +72,6 @@ fun ValidatePhoneNumberScreen(navController: NavController) {
         },
         content = {
 
-            //context
-            val m_context = LocalContext.current
-
             var onGoingProgress by remember {
                 mutableStateOf(false)
             }
@@ -63,12 +80,6 @@ fun ValidatePhoneNumberScreen(navController: NavController) {
                 DialogBoxLoading()
             }
 
-
-            var user_saved_data by remember {
-                mutableStateOf(
-                    m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
-                )
-            }
 
             var phoneNumberValidCodeTextEdit by remember {
                 mutableStateOf("")
@@ -86,13 +97,13 @@ fun ValidatePhoneNumberScreen(navController: NavController) {
                 mutableStateOf("")
             }
 
-            val userAuthRequest = UserAuthRequest(LocalContext.current)
-
-            userAuthRequest.requestSmsValidationCode({ message ->
-                requestMessage = message
-            }, {
-                requestMessage = "مشکلی پیش آمده است لطفا بعدا دوباره امتحان کنید!"
-            })
+            LaunchedEffect(Unit) {
+                userAuthRequest.requestSmsValidationCode({ message ->
+                    requestMessage = message
+                }, {
+                    requestMessage = "مشکلی پیش آمده است لطفا بعدا دوباره امتحان کنید!"
+                })
+            }
 
             val verticalScroll = rememberScrollState()
 
@@ -170,7 +181,8 @@ fun ValidatePhoneNumberScreen(navController: NavController) {
                                             navController.navigate("home") {
                                                 popUpTo(0)
                                             }
-                                            Toast.makeText(m_context,message,Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(m_context, message, Toast.LENGTH_SHORT)
+                                                .show()
                                         }
                                         requestMessage = message
                                     },
@@ -186,9 +198,16 @@ fun ValidatePhoneNumberScreen(navController: NavController) {
 
                 }
                 Spacer(modifier = Modifier.height(10.dp))
-
-                CountdownTimer2Min {
-                    sendAgainButtonEnabled = true
+                if (!sendAgainButtonEnabled) {
+                    CountdownTimer2Min(120000) {
+                        sendAgainButtonEnabled = true
+                    }
+                } else {
+                    val countDownTime = " 00:00 "
+                    Text(
+                        text = "کد ارسالی برای شما تا $countDownTime بعد اعتبار دارد",
+                        color = Color.Gray
+                    )
                 }
 
 
@@ -204,7 +223,6 @@ fun CountdownTimer2Min(
     timeLeft: Long = 120000,
     onEnd: () -> Unit
 ) {
-    val context = LocalContext.current
     val timer = remember { mutableStateOf(timeLeft) }
 
     LaunchedEffect(key1 = timer.value) {

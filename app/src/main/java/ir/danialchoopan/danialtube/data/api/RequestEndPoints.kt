@@ -5,6 +5,9 @@ object RequestEndPoints {
     val rootDomainApi = "$rootDomain/api"
     val storageLoad = "$rootDomain/storage/"
 
+    //connection check
+    val internetCheck = "$rootDomainApi/internet"
+
     //user auth requests
     val userRegister = "$rootDomainApi/auth/register"
     val userLogin = "$rootDomainApi/auth/login"
@@ -46,8 +49,9 @@ object RequestEndPoints {
     val myCourse =
         "$rootDomainApi/user/profile/course/transaction"
 
-    val addCourseFavorite = "$rootDomainApi/user/add/course/favorite" // arg course_id GET
-    val removeCourseFavorite = "$rootDomainApi/user/remove/course/favorite"// arg course_id GET
+    val checkCourseFavorite="$rootDomainApi/user/check/course/favorite"; //arg course_id POST
+    val addCourseFavorite = "$rootDomainApi/user/add/course/favorite" // arg course_id POST
+    val removeCourseFavorite = "$rootDomainApi/user/remove/course/favorite"// arg course_id POST
 
 
 }

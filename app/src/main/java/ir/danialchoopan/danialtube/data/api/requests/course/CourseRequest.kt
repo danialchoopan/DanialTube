@@ -12,6 +12,7 @@ import ir.danialchoopan.danialtube.data.api.model.moreBestSelling.MoreBestSellin
 import ir.danialchoopan.danialtube.data.api.model.moreMostPopular.MorePopularCourseModel
 import ir.danialchoopan.danialtube.data.api.model.myCourses.MyCoursesModel
 import ir.danialchoopan.danialtube.data.api.model.myFavouriteCourses.MyFavouriteCoursesModel
+import org.json.JSONObject
 
 class CourseRequest(val m_context: Context) {
     val userSharedPreferences = m_context.getSharedPreferences("user_data", Context.MODE_PRIVATE)
@@ -235,19 +236,15 @@ class CourseRequest(val m_context: Context) {
     }
 
 
+    //check favorite
 
-    //favorite
-
-    fun AddToFavoriteCourses(success:()->Unit,course_id: String){
+    fun CheckFavoriteCourses(course_id: String,result:(favorite:Boolean)->Unit){
         val str_request =
             object : StringRequest(
-                Method.POST, RequestEndPoints.addCourseFavorite+"/$course_id" ,
+                Method.POST, RequestEndPoints.checkCourseFavorite+"/$course_id" ,
                 { strResponse ->
-                    try {
-                        success()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    val jsonResponseObject=JSONObject(strResponse)
+                    result(jsonResponseObject.getBoolean("status"))
                 }
                 //error
                 , {
@@ -270,17 +267,42 @@ class CourseRequest(val m_context: Context) {
         VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
     }
 
+    //add favorite
+    fun AddToFavoriteCourses(course_id: String,success:()->Unit){
+        val str_request =
+            object : StringRequest(
+                Method.POST, RequestEndPoints.addCourseFavorite+"/$course_id" ,
+                { strResponse ->
+                    success()
+                }
+                //error
+                , {
+                    it.printStackTrace()
+                }) {
 
-    fun RemoveFromFavoriteCourses(success:()->Unit,course_id: String){
+                override fun getHeaders(): MutableMap<String, String> {
+                    val requestHeaders = HashMap<String, String>()
+                    val token_access=userSharedPreferences.getString("token","")
+                    requestHeaders["Authorization"] = "Bearer $token_access";
+                    return requestHeaders
+
+                }
+
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+                    return m_params
+                }
+            }//end request register
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
+    }
+
+    //remove favorite
+    fun RemoveFromFavoriteCourses(course_id: String,success:()->Unit){
         val str_request =
             object : StringRequest(
                 Method.POST, RequestEndPoints.removeCourseFavorite+"/$course_id" ,
                 { strResponse ->
-                    try {
-                        success()
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
+                    success()
                 }
                 //error
                 , {

@@ -36,28 +36,28 @@ import kotlin.math.log
 fun LoginRegisterUserScreenSwitch(
     m_context: Context, homeScreenViewModel: HomeScreenViewModel,
     loginLogoutUser: (bottom: String) -> Unit,
-    navController:NavController
+    navController: NavController
 ) {
-    val registerScroll= rememberScrollState()
+    val registerScroll = rememberScrollState()
 
     var login_Screen_switch by remember {
         mutableStateOf(true)
     }
     if (login_Screen_switch) {
-        LoginUserProfileScreen(m_context, homeScreenViewModel,{ login ->
+        LoginUserProfileScreen(m_context, homeScreenViewModel, { login ->
             login_Screen_switch = login
-        },{
+        }, {
             //login success
             reloadHomePage(navController)
-        },navController)
+        }, navController)
 
     } else {
-        RegisterUserProfileScreen(m_context, homeScreenViewModel,{ login ->
+        RegisterUserProfileScreen(m_context, homeScreenViewModel, { login ->
             login_Screen_switch = login
-        },{
+        }, {
             //register success
             reloadHomePage(navController)
-        },Modifier.verticalScroll(registerScroll))
+        }, navController, Modifier.verticalScroll(registerScroll))
     }
 }
 
@@ -110,7 +110,7 @@ fun LoginUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 emailOrPhoneLoginTextBox = it
-                emailOrPhoneLoginTextBoxError=false
+                emailOrPhoneLoginTextBoxError = false
             },
             leadingIcon =
             {
@@ -135,7 +135,7 @@ fun LoginUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 passwordLoginTextBox = it
-                passwordLoginTextBoxError=false
+                passwordLoginTextBoxError = false
             },
             leadingIcon =
             {
@@ -154,8 +154,8 @@ fun LoginUserProfileScreen(
         Button(
             modifier = Modifier.fillMaxWidth(), onClick = {
 
-                emailOrPhoneLoginTextBoxError=emailOrPhoneLoginTextBox.isEmpty()
-                passwordLoginTextBoxError=passwordLoginTextBox.isEmpty()
+                emailOrPhoneLoginTextBoxError = emailOrPhoneLoginTextBox.isEmpty()
+                passwordLoginTextBoxError = passwordLoginTextBox.isEmpty()
 
                 if (
                     emailOrPhoneLoginTextBox.isNotEmpty() &&
@@ -181,18 +181,17 @@ fun LoginUserProfileScreen(
                             ).show()
                             Toast.makeText(
                                 m_context,
-                                "خوش آمدی ${loginResponse.user.name} ",
+                                " خوش آمدی ${loginResponse.user.name} ",
                                 Toast.LENGTH_SHORT
                             ).show()
                             UserAuthRequest(m_context).checkPhoneNumberIfValid {
-                                if(it){
+                                if (it) {
                                     loginLogoutUser("home")
-                                }else{
+                                } else {
                                     navController.navigate("ValidatePhoneNumberScreen")
                                 }
                                 onGoingProgress = false
                             }
-
 
 
                         } else {
@@ -222,6 +221,14 @@ fun LoginUserProfileScreen(
                 }, color = Color.Blue
         )
 
+        Text(
+            text = "فراموشی رمزعبور", fontSize = 16.sp,
+            modifier = Modifier
+                .padding(10.dp)
+                .clickable {
+                    //navigate to forgot password scrren
+                }, color = Color.Blue
+        )
     }
 }
 
@@ -231,7 +238,8 @@ fun RegisterUserProfileScreen(
     m_context: Context, homeScreenViewModel: HomeScreenViewModel,
     onButtonLoginSwitchClick: (login: Boolean) -> Unit,
     loginLogoutUser: (bottom: String) -> Unit,
-    modifier:Modifier=Modifier
+    navController: NavController,
+    modifier: Modifier = Modifier
 ) {
 
     //text box
@@ -296,7 +304,7 @@ fun RegisterUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 nameRegisterTextBox = it
-                nameRegisterTextBoxError=false
+                nameRegisterTextBoxError = false
             },
             label = { Text(text = "نام نمایشی") },
             leadingIcon =
@@ -321,7 +329,7 @@ fun RegisterUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 emailRegisterTextBox = it
-                emailRegisterTextBoxError=false
+                emailRegisterTextBoxError = false
             },
             label = { Text(text = "پست الکترونیک") },
             leadingIcon =
@@ -346,7 +354,7 @@ fun RegisterUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 phoneRegisterTextBox = it
-                phoneRegisterTextBoxError=false
+                phoneRegisterTextBoxError = false
             },
             label = { Text(text = "شماره همراه") },
             leadingIcon =
@@ -368,7 +376,7 @@ fun RegisterUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 passwordRegisterTextBox = it
-                passwordRegisterTextBoxError=false
+                passwordRegisterTextBoxError = false
             },
             label = { Text(text = "رمزعبور") },
             leadingIcon =
@@ -390,7 +398,7 @@ fun RegisterUserProfileScreen(
             modifier = Modifier.fillMaxWidth(),
             onValueChange = {
                 rePasswordRegisterTextBox = it
-                rePasswordRegisterTextBoxError=false
+                rePasswordRegisterTextBoxError = false
             },
             leadingIcon =
             {
@@ -408,17 +416,17 @@ fun RegisterUserProfileScreen(
         Spacer(modifier = Modifier.height(10.dp))
         Button(
             modifier = Modifier.fillMaxWidth(), onClick = {
-                nameRegisterTextBoxError=nameRegisterTextBox.isEmpty()
-                emailRegisterTextBoxError=emailRegisterTextBox.isEmpty()
-                phoneRegisterTextBoxError=phoneRegisterTextBox.isEmpty()
-                passwordRegisterTextBoxError=passwordRegisterTextBox.isEmpty()
-                rePasswordRegisterTextBoxError=rePasswordRegisterTextBox.isEmpty()
+                nameRegisterTextBoxError = nameRegisterTextBox.isEmpty()
+                emailRegisterTextBoxError = emailRegisterTextBox.isEmpty()
+                phoneRegisterTextBoxError = phoneRegisterTextBox.isEmpty()
+                passwordRegisterTextBoxError = passwordRegisterTextBox.isEmpty()
+                rePasswordRegisterTextBoxError = rePasswordRegisterTextBox.isEmpty()
 
-                if(!isValidEmail(emailRegisterTextBox)){
-                    emailRegisterTextBoxError=true
+                if (!isValidEmail(emailRegisterTextBox)) {
+                    emailRegisterTextBoxError = true
                 }
-                if(!isValidPhoneNumber(phoneRegisterTextBox)){
-                    phoneRegisterTextBoxError=true
+                if (!isValidPhoneNumber(phoneRegisterTextBox)) {
+                    phoneRegisterTextBoxError = true
                 }
 
                 if (nameRegisterTextBox.isNotEmpty() &&
@@ -439,14 +447,30 @@ fun RegisterUserProfileScreen(
                             emailRegisterTextBox,
                             phoneRegisterTextBox,
                             passwordRegisterTextBox
-                        ) {success->
+                        ) { success ->
                             if (success) {
-                                Toast.makeText(m_context, "شما با موفقیت نام نویسی شدید", Toast.LENGTH_SHORT).show()
-                                loginLogoutUser("home")
+                                UserAuthRequest(m_context).checkPhoneNumberIfValid {
+                                    if (it) {
+                                        Toast.makeText(
+                                            m_context,
+                                            "شما با موفقیت نام نویسی شدید",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        loginLogoutUser("home")
+                                    } else {
+                                        navController.navigate("ValidatePhoneNumberScreen")
+                                    }
+                                    onGoingProgress = false
+                                }
                             } else {
-                                Toast.makeText(m_context, "مشکلی پیش آمده است لطفا بعدا امتحان کنید", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    m_context,
+                                    "مشکلی پیش آمده است لطفا بعدا امتحان کنید",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+
+                                onGoingProgress = false
                             }
-                            onGoingProgress = false
                         }
                         //clear text boxs
                         nameRegisterTextBox = ""
@@ -455,9 +479,13 @@ fun RegisterUserProfileScreen(
                         passwordRegisterTextBox = ""
                         rePasswordRegisterTextBox = ""
                     } else {
-                        passwordRegisterTextBoxError=true
-                        rePasswordRegisterTextBoxError=true
-                        Toast.makeText(m_context, "رمز عبور انتخابی شما با تکرار آن برار نیست ", Toast.LENGTH_SHORT).show()
+                        passwordRegisterTextBoxError = true
+                        rePasswordRegisterTextBoxError = true
+                        Toast.makeText(
+                            m_context,
+                            "رمز عبور انتخابی شما با تکرار آن برار نیست ",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 } else {
                     Toast.makeText(
@@ -470,9 +498,12 @@ fun RegisterUserProfileScreen(
             Text(text = "نام نویسی", modifier = Modifier.padding(10.dp), fontSize = 19.sp)
         }
 
-        Text(text = "شرایط استفاده از خدمات و حریم خصوصی را میپذیرم", fontSize = 13.sp, color = Color.LightGray,
+        Text(
+            text = "شرایط استفاده از خدمات و حریم خصوصی را میپذیرم",
+            fontSize = 13.sp,
+            color = Color.LightGray,
             modifier = Modifier.padding(5.dp)
-            )
+        )
         Spacer(modifier = Modifier.height(5.dp))
         Text(
             text = "ورود به حساب کاربری ", fontSize = 16.sp,

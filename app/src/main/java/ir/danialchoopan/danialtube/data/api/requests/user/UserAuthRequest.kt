@@ -38,6 +38,8 @@ class UserAuthRequest(val m_context: Context) {
                             it.putString("name", registerResult.user.name)
                             it.putString("email", registerResult.user.email)
                             it.putString("phone", registerResult.user.phoneNumber)
+                            it.putString("has_login", "has_login")
+
                         }.apply()
                     } catch (e: Exception) {
                         resultRequest(
