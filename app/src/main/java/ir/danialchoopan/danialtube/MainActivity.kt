@@ -40,6 +40,9 @@ import ir.danialchoopan.danialtube.screen.privacy.PrivacyUsersScreen
 import ir.danialchoopan.danialtube.screen.splash.splashScreen
 import ir.danialchoopan.danialtube.screen.user.EditUserDataScreen
 import ir.danialchoopan.danialtube.screen.user.ValidatePhoneNumberScreen
+import ir.danialchoopan.danialtube.screen.user.forgotPassword.ForgotPasswordChangePasswordScreen
+import ir.danialchoopan.danialtube.screen.user.forgotPassword.ForgotPasswordPhoneCheckScreen
+import ir.danialchoopan.danialtube.screen.user.forgotPassword.ForgotPasswordPhoneVerifyScreen
 import ir.danialchoopan.danialtube.ui.theme.DanialTubeTheme
 import kotlinx.coroutines.launch
 
@@ -47,94 +50,122 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val navController= rememberNavController()
+            val navController = rememberNavController()
 
             DanialTubeTheme {
                 //app route
                 RightToLeftLayout {
-                    NavHost(navController = navController
-                        ,startDestination ="splashScreen"){
+                    NavHost(
+                        navController = navController, startDestination = "splashScreen"
+                    ) {
 
-
-                        composable("splashScreen"){
+                        composable("splashScreen") {
                             splashScreen(navController)
                         }
 
-                        composable("home"){
+                        composable("home") {
                             HomePageScreen(navController)
                         }
 
                         //course's screen
-                        composable("course/{courseId}"){navBackStackEntry->
-                            val courseId= navBackStackEntry.arguments!!.getString("courseId")
-                            showCourseScreen(navController,course_id = courseId.toString())
+                        composable("course/{courseId}") { navBackStackEntry ->
+                            val courseId = navBackStackEntry.arguments!!.getString("courseId")
+                            showCourseScreen(navController, course_id = courseId.toString())
                         }
 
-                        composable("myCourses"){
+                        composable("myCourses") {
                             myCoursesScreen(navController)
                         }
 
-                        composable("myFavouriteCourses"){
+                        composable("myFavouriteCourses") {
                             myFavouriteCoursesScreen(navController)
                         }
 
-
                         //more course's screen
-                        composable("morePoplarCourse"){
+                        composable("morePoplarCourse") {
                             morePoplarCourseScreen(navController)
                         }
 
-                        composable("bestSellingCourse"){
-                             bestSellingCourseScreen(navController)
+                        composable("bestSellingCourse") {
+                            bestSellingCourseScreen(navController)
                         }
-
 
                         //end course screen
 
                         //category's screen
-                        composable("category"){
+                        composable("category") {
                             ShowAllCategoryScreen(navController)
                         }
 
-                        composable("subCategory/{category_id}"){navBackStackEntry->
-                            val courseId= navBackStackEntry.arguments!!.getString("category_id")
-                            ShowAllSubCategoryScreen(navController,category_id = courseId.toString())
+                        composable("subCategory/{category_id}") { navBackStackEntry ->
+                            val courseId = navBackStackEntry.arguments!!.getString("category_id")
+                            ShowAllSubCategoryScreen(
+                                navController,
+                                category_id = courseId.toString()
+                            )
                         }
 
-                        composable("homePageCategory/{category_id}"){navBackStackEntry->
-                            val courseId= navBackStackEntry.arguments!!.getString("category_id")
-                            homePageCategoryScreen(navController,category_id = courseId.toString())
+                        composable("homePageCategory/{category_id}") { navBackStackEntry ->
+                            val courseId = navBackStackEntry.arguments!!.getString("category_id")
+                            homePageCategoryScreen(navController, category_id = courseId.toString())
                         }
 
 
-                        composable("subCategoryCourse/{sub_category_id}"){navBackStackEntry->
-                            val courseId= navBackStackEntry.arguments!!.getString("sub_category_id")
-                            ShowAllCourseSubCategoryScreen(navController,sub_category_id = courseId.toString())
+                        composable("subCategoryCourse/{sub_category_id}") { navBackStackEntry ->
+                            val courseId =
+                                navBackStackEntry.arguments!!.getString("sub_category_id")
+                            ShowAllCourseSubCategoryScreen(
+                                navController,
+                                sub_category_id = courseId.toString()
+                            )
                         }
                         //end category screen
 
 
                         //drawer menu
-                        composable("aboutUs"){
+                        composable("aboutUs") {
                             AboutUsScreen(navController)
                         }
 
-                        composable("userPrivacy"){
+                        composable("userPrivacy") {
                             PrivacyUsersScreen(navController)
                         }
 
                         //edit user screen
-                        composable("userEditPasswordEmail"){
+                        composable("userEditPasswordEmail") {
                             EditUserDataScreen(navController)
                         }
 
                         //send code screen
-                        composable("ValidatePhoneNumberScreen"){
+                        composable("ValidatePhoneNumberScreen") {
                             ValidatePhoneNumberScreen(navController)
                         }
 
+                        //forgot password
 
+                        composable("forgotPasswordPhoneCheck") {
+                            ForgotPasswordPhoneCheckScreen(navController)
+                        }
 
+                        composable("forgotPasswordPhoneVerify/{phone_number}") { navBackStackEntry ->
+                            val phone_number =
+                                navBackStackEntry.arguments!!.getString("phone_number").toString()
+                            ForgotPasswordPhoneVerifyScreen(navController, phone_number)
+                        }
+
+                        composable("forgotPasswordChangePassword/phone/{phone_number}/token/{token}") { navBackStackEntry ->
+                            val phone_number =
+                                navBackStackEntry.arguments!!.getString("phone_number").toString()
+                            val token =
+                                navBackStackEntry.arguments!!.getString("token").toString()
+                            ForgotPasswordChangePasswordScreen(
+                                navController = navController,
+                                phone_number = phone_number,
+                                userToken = token
+                            )
+                        }
+
+                        //end forgot password
 
                     }
                 }

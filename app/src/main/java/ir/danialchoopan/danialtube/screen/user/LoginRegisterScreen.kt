@@ -226,7 +226,7 @@ fun LoginUserProfileScreen(
             modifier = Modifier
                 .padding(10.dp)
                 .clickable {
-                    //navigate to forgot password scrren
+                    navController.navigate("forgotPasswordPhoneCheck")
                 }, color = Color.Blue
         )
     }

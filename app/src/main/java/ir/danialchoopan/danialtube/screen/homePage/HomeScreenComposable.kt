@@ -140,7 +140,7 @@ fun HomePageScreenScaffoldContent(
                     .fillMaxWidth()
                     .padding(15.dp)
             ) {
-                Text(text = "محبوب ترین دوره ها")
+                Text(text = "جدید ترین دوره ها")
                 Text(text = "بیشتر ...", color = Color.Blue, modifier = Modifier.clickable {
                     navController.navigate("morePoplarCourse")
                 })
@@ -211,7 +211,7 @@ fun HomePageScreenScaffoldContent(
                     .fillMaxWidth()
                     .padding(15.dp)
             ) {
-                Text(text = "پرفروش ترین دوره ها")
+                Text(text = "محبوب ترین دوره ها")
                 Text(text = "بیشتر ...", color = Color.Blue, modifier = Modifier.clickable {
                     navController.navigate("bestSellingCourse")
                 })

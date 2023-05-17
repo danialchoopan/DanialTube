@@ -18,6 +18,12 @@ object RequestEndPoints {
     val userSendPhoneValidCode = "$rootDomainApi/user/phone/code" //token
     val userCheckValidPhone = "$rootDomainApi/user/phone/check/valid" //token
 
+    //use reset password
+    val userRestPasswordCheckPhone = "$rootDomainApi/user/rest/password"
+    val userRestPasswordRequestSms = "$rootDomainApi/user/rest/password/request/sms"
+    val userRestPasswordSendSms = "$rootDomainApi/user/rest/password/send/sms"
+    val userRestPasswordChangePassword = "$rootDomainApi/user/rest/change/password" //token
+
     //edit user
     val userEditPasswordEdit = "$rootDomainApi/user/edit/password/email" //token
 

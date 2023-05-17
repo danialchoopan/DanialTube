@@ -2,6 +2,7 @@ package ir.danialchoopan.danialtube.data.api.requests.user
 
 import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.Composable
 import com.android.volley.toolbox.StringRequest
 import com.google.gson.Gson
 import com.google.gson.JsonObject
@@ -274,13 +275,13 @@ class UserAuthRequest(val m_context: Context) {
 
     //phone number requests
 
-    fun requestSmsValidationCode(success: (message:String) -> Unit, failed: () -> Unit) {
+    fun requestSmsValidationCode(success: (message: String) -> Unit, failed: () -> Unit) {
         val str_request =
             object : StringRequest(Method.POST, RequestEndPoints.userRequestPhoneValidCode,
                 { strResponse ->
                     try {
                         success(JSONObject(strResponse).getString("message"))
-                    }catch (e : Exception){
+                    } catch (e: Exception) {
                         failed()
                     }
 
@@ -308,14 +309,18 @@ class UserAuthRequest(val m_context: Context) {
         VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
     }
 
-    fun sendRequestSmsValidationCode(code:String,success: (message:String,status:Boolean) -> Unit, failed: () -> Unit) {
+    fun sendRequestSmsValidationCode(
+        code: String,
+        success: (message: String, status: Boolean) -> Unit,
+        failed: () -> Unit
+    ) {
         val str_request =
             object : StringRequest(Method.POST, RequestEndPoints.userSendPhoneValidCode,
                 { strResponse ->
                     try {
-                        val jsonObject=JSONObject(strResponse)
-                        success(jsonObject.getString("message"),jsonObject.getBoolean("status"))
-                    }catch (e : Exception){
+                        val jsonObject = JSONObject(strResponse)
+                        success(jsonObject.getString("message"), jsonObject.getBoolean("status"))
+                    } catch (e: Exception) {
                         failed()
                     }
 
@@ -336,7 +341,7 @@ class UserAuthRequest(val m_context: Context) {
 
                 override fun getParams(): MutableMap<String, String> {
                     val m_params = HashMap<String, String>()
-                    m_params["code"]=code
+                    m_params["code"] = code
                     return m_params
                 }
 
@@ -344,11 +349,11 @@ class UserAuthRequest(val m_context: Context) {
         VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
     }
 
-    fun checkPhoneNumberIfValid(success: (result:Boolean) -> Unit) {
+    fun checkPhoneNumberIfValid(success: (result: Boolean) -> Unit) {
         val str_request =
             object : StringRequest(Method.POST, RequestEndPoints.userCheckValidPhone,
                 { strResponse ->
-                        success(JSONObject(strResponse).getBoolean("status"))
+                    success(JSONObject(strResponse).getBoolean("status"))
 
                 }
                 //error
@@ -374,4 +379,128 @@ class UserAuthRequest(val m_context: Context) {
     //end phone requests
 
 
+    //rest (forgot) password
+
+    fun userRestPasswordCheckPhone(phone_number: String, status: (status: Boolean) -> Unit) {
+        val str_request =
+            object : StringRequest(Method.POST, RequestEndPoints.userRestPasswordCheckPhone,
+                { strResponse ->
+                    status(JSONObject(strResponse).getBoolean("status"))
+                }
+                //error
+                , {
+                    it.printStackTrace()
+                }) {
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+                    m_params["phone_number"] = phone_number
+                    return m_params
+                }
+            }
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
+    }
+
+    fun userRestPasswordRequestSms(phone_number: String, status: (String) -> Unit,failed: () -> Unit) {
+        val str_request =
+            object : StringRequest(Method.POST, RequestEndPoints.userRestPasswordRequestSms,
+                { strResponse ->
+                    status(JSONObject(strResponse).getString("message"))
+
+                }
+                //error
+                , {
+                    it.printStackTrace()
+                    failed()
+                }) {
+
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+                    m_params["phone_number"] = phone_number
+                    return m_params
+                }
+
+            }
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
+    }
+
+    fun userRestPasswordSendSms(
+        phone_number: String,
+        code: String,
+        status: (success:Boolean,message: String, token: String) -> Unit,
+        failed: () -> Unit
+    ) {
+        val str_request =
+            object : StringRequest(Method.POST, RequestEndPoints.userRestPasswordSendSms,
+                { strResponse ->
+                    val json_response = JSONObject(strResponse)
+                    val statusRequest=json_response.getBoolean("status")
+                    val messageRequest= json_response.getString("message")
+                    if(statusRequest){
+                        status(
+                            statusRequest ,messageRequest, json_response.getString("user_token")
+                        )
+                    }else{
+                        status(
+                            statusRequest ,
+                            messageRequest, ""
+                        )
+                    }
+
+                }
+                //error
+                , {
+                    failed()
+                    it.printStackTrace()
+                }) {
+
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+                    m_params["code"] = code
+                    m_params["phone_number"] = phone_number
+                    return m_params
+                }
+
+            }
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
+    }
+
+
+    fun userRestPasswordChangePassword(
+        newPassword: String,
+        userToken: String,
+        status: (message: String) -> Unit
+    ) {
+        val str_request =
+            object : StringRequest(Method.POST, RequestEndPoints.userRestPasswordChangePassword,
+                { strResponse ->
+                    val json_response = JSONObject(strResponse)
+                    status(
+                        json_response.getString("message")
+                    )
+                }
+                //error
+                , {
+                    it.printStackTrace()
+                }) {
+
+                override fun getHeaders(): MutableMap<String, String> {
+                    val requestHeaders = HashMap<String, String>()
+                    requestHeaders["Authorization"] = "Bearer $userToken";
+                    return requestHeaders
+                }
+
+                override fun getParams(): MutableMap<String, String> {
+                    val m_params = HashMap<String, String>()
+                    m_params["newPassword"] = newPassword
+                    return m_params
+                }
+
+            }
+        VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
+    }
+
+
 }
+
+
+
