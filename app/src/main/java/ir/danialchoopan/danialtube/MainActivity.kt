@@ -25,12 +25,14 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import ir.danialchoopan.danialtube.data.api.model.courseShow.CourseWithVideosUser
 import ir.danialchoopan.danialtube.screen.HomePageScreen
 import ir.danialchoopan.danialtube.screen.about.AboutUsScreen
 import ir.danialchoopan.danialtube.screen.category.ShowAllCategoryScreen
 import ir.danialchoopan.danialtube.screen.category.ShowAllCourseSubCategoryScreen
 import ir.danialchoopan.danialtube.screen.category.ShowAllSubCategoryScreen
 import ir.danialchoopan.danialtube.screen.category.homePageCategory.homePageCategoryScreen
+import ir.danialchoopan.danialtube.screen.course.`check-out`.CourseCheckOutScreen
 import ir.danialchoopan.danialtube.screen.course.myCoursesScreen
 import ir.danialchoopan.danialtube.screen.course.myFavouriteCoursesScreen
 import ir.danialchoopan.danialtube.screen.course.showCourseScreen
@@ -73,6 +75,10 @@ class MainActivity : ComponentActivity() {
                             showCourseScreen(navController, course_id = courseId.toString())
                         }
 
+                        composable("course/check-out/{course_id}"){navBackStackEntry ->
+                            val course_id = navBackStackEntry.arguments!!.getString("course_id").toString()
+                            CourseCheckOutScreen(navController,course_id)
+                        }
                         composable("myCourses") {
                             myCoursesScreen(navController)
                         }

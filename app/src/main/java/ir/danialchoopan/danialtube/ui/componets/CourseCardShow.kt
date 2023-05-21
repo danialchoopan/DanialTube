@@ -83,12 +83,58 @@ fun courseCardShowComponent(
                         color = Color.Gray,
                         fontSize = 13.sp
                     )
+                    if(coursePrice=="0"){
+                        Text(
+                            text = "رایگان", color = Color(0xFF2E7D32),
+                            fontSize = 14.sp
+                        )
+                    }else{
+                        val priceCourse = formatPrice(coursePrice) + " تومان "
+                        Text(
+                            text = priceCourse, color = Color(0xFF2E7D32),
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
 
-                    val priceCourse = formatPrice(coursePrice) + " تومان "
+@Composable
+fun courseCardShowComment(
+    comment: String,
+    username: String,
+) {
+    Card(
+        elevation = 2.dp, modifier = Modifier
+            .width(260.dp)
+            .height(120.dp)
+            .padding(5.dp),
+    ) {
+
+        Column(
+        ) {
+
+            Column(modifier = Modifier.fillMaxWidth().height(150.dp).padding(15.dp), verticalArrangement = Arrangement.Center,  horizontalAlignment = Alignment.Start) {
+                Text(
+                    text = comment,
+                    color = Color.DarkGray,
+                    fontSize = 14.sp
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+                Row(
+                    horizontalArrangement = Arrangement.End,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+
                     Text(
-                        text = priceCourse, color = Color(0xFF2E7D32),
-                        fontSize = 14.sp
+                        text = username,
+                        color = Color.Gray,
+                        fontSize = 13.sp
                     )
+
                 }
             }
         }
@@ -182,12 +228,18 @@ fun courseCardShowListComponent(
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier.fillMaxWidth()
                 ) {
-
-                    val priceCourse = formatPrice(coursePrice) + " تومان "
-                    Text(
-                        text = priceCourse, color = Color(0xFF2E7D32),
-                        fontSize = 14.sp
-                    )
+                    if(coursePrice=="0") {
+                        Text(
+                            text = "رایگان", color = Color(0xFF2E7D32),
+                            fontSize = 14.sp
+                        )
+                    }else{
+                        val priceCourse = formatPrice(coursePrice) + " تومان "
+                        Text(
+                            text = priceCourse, color = Color(0xFF2E7D32),
+                            fontSize = 14.sp
+                        )
+                    }
                 }
             }
         }
@@ -258,12 +310,16 @@ fun courseCardShowComponentGrid2(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-
-                    val priceCourse = formatPrice(coursePrice) + " تومان "
-                    Text(
-                        text = priceCourse, color = Color(0xFF2E7D32),
-                        fontSize = 14.sp
-                    )
+                    if(coursePrice=="0"){
+                        Text(text = "رایگان", color = Color(0xFF2E7D32),
+                            fontSize = 14.sp)
+                    }else{
+                        val priceCourse = formatPrice(coursePrice) + " تومان "
+                        Text(
+                            text = priceCourse, color = Color(0xFF2E7D32),
+                            fontSize = 14.sp
+                        )
+                    }
 
                 }
             }
@@ -274,6 +330,7 @@ fun courseCardShowComponentGrid2(
 @OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun courseCardShowMoreComponent(
+    show_text:String="نمایش دوره های بیشتر",
     onClick: () -> Unit,
     modifierCard: Modifier = Modifier,
 ) {
@@ -299,7 +356,7 @@ fun courseCardShowMoreComponent(
                 modifier = Modifier.size(65.dp)
             )
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "نمایش دوره های بیشتر", fontSize = 16.sp, color = Color.Gray)
+            Text(text = show_text, fontSize = 16.sp, color = Color.Gray)
 
         }
     }

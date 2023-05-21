@@ -24,9 +24,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
+import ir.danialchoopan.danialtube.data.api.model.courseComment.CourseComments
 import ir.danialchoopan.danialtube.data.api.model.courseShow.ShowCourse
+import ir.danialchoopan.danialtube.data.api.model.moreCourse.MoreCourseShowCourse
 import ir.danialchoopan.danialtube.data.api.requests.course.CourseRequest
-import ir.danialchoopan.danialtube.ui.componets.DialogBoxLoading
+import ir.danialchoopan.danialtube.ui.componets.*
 import ir.danialchoopan.danialtube.utils.IsUserLogin
 import ir.danialchoopan.danialtube.utils.LoadImageFormURLFixutils
 import ir.danialchoopan.danialtube.utils.bottomBorder
@@ -57,6 +59,23 @@ fun showCourseScreen(navController: NavController, course_id: String) {
     var courseFavorite by remember {
         mutableStateOf(false)
     }
+
+    var processTake by remember {
+        mutableStateOf(true)
+    }
+
+    var courseTake by remember {
+        mutableStateOf(false)
+    }
+
+    var processMoreCourse by remember {
+        mutableStateOf(true)
+    }
+    
+    var processComments by remember {
+        mutableStateOf(true)
+    }
+
     val m_context = LocalContext.current
     val is_user_login = IsUserLogin(m_context)
 
@@ -78,6 +97,8 @@ fun showCourseScreen(navController: NavController, course_id: String) {
         content = {
             //end load data new way
             var courseDataShow by remember { mutableStateOf<ShowCourse?>(null) }
+            var moreCourse by remember { mutableStateOf<MoreCourseShowCourse?>(null) }
+            var courseComment4 by remember { mutableStateOf<CourseComments?>(null) }
 
             val courseRequestVolley = CourseRequest(LocalContext.current)
             LaunchedEffect(Unit) {
@@ -86,7 +107,19 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                     courseDataShow = showCourse
                     courseRequestVolley.CheckFavoriteCourses(course_id) {
                         courseFavorite = it
-                        processFavorite=false
+                        processFavorite = false
+                    }
+                    courseRequestVolley.CheckCourseTaken(course_id) {
+                        courseTake = it
+                        processTake = false
+                    }
+                    courseRequestVolley.ShowMoreCourses {
+                        moreCourse=it
+                        processMoreCourse=false
+                    }
+                    courseRequestVolley.showCourseComment4(course_id){
+                        courseComment4=it
+                        processComments=false
                     }
                 }
             }
@@ -123,12 +156,20 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                         horizontalArrangement = Arrangement.End,
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        val priceCourse = formatPrice(course.price.toString()) + " تومان "
-                        Text(
-                            text = priceCourse, color = Color(0xFF2E7D32),
-                            fontSize = 20.sp,
-                            modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp)
-                        )
+                        if (course.price == 0) {
+                            Text(
+                                text = "رایگان!", color = Color(0xFF2E7D32),
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp)
+                            )
+                        } else {
+                            val priceCourse = formatPrice(course.price.toString()) + " تومان "
+                            Text(
+                                text = priceCourse, color = Color(0xFF2E7D32),
+                                fontSize = 20.sp,
+                                modifier = Modifier.padding(horizontal = 15.dp, vertical = 2.dp)
+                            )
+                        }
                     }
 
                     Row(
@@ -173,10 +214,10 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                             } else {
                                 if (courseFavorite) {
                                     IconButton(onClick = {
-                                        processFavorite=true
-                                        courseRequestVolley.RemoveFromFavoriteCourses(course_id){
-                                            processFavorite=false
-                                            courseFavorite=!courseFavorite
+                                        processFavorite = true
+                                        courseRequestVolley.RemoveFromFavoriteCourses(course_id) {
+                                            processFavorite = false
+                                            courseFavorite = !courseFavorite
                                         }
                                     }, modifier = Modifier.width(50.dp)) {
                                         Icon(
@@ -190,10 +231,10 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                                     }
                                 } else {
                                     IconButton(onClick = {
-                                        processFavorite=true
-                                        courseRequestVolley.AddToFavoriteCourses(course_id){
-                                            processFavorite=false
-                                            courseFavorite=!courseFavorite
+                                        processFavorite = true
+                                        courseRequestVolley.AddToFavoriteCourses(course_id) {
+                                            processFavorite = false
+                                            courseFavorite = !courseFavorite
                                         }
                                     }, modifier = Modifier.width(50.dp)) {
                                         Icon(
@@ -208,41 +249,94 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                                 }
                             }
                         }
+                        if (processTake) {
+                            LinearProgressIndicator(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 5.dp, vertical = 10.dp)
+                            )
+                        } else {
+                            if (courseTake) {
+                                Button(
+                                    onClick = {
 
-                        Button(
-                            onClick = {
-                                if (is_user_login) {
-                                    //do something with
-                                } else {
-                                    Toast.makeText(
-                                        m_context,
-                                        "لطفا اول وارد حساب کاربری خود شوید.",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 5.dp, vertical = 10.dp)
+                                        .background(Color.Green)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Box(modifier = Modifier.width(10.dp))
+                                        Text(
+                                            text = "شما در این دوره شرکت کرده اید",
+                                            modifier = Modifier
+                                                .padding(5.dp)
+                                                .scale(1.5f)
+                                        )
+                                        Icon(
+                                            imageVector = Icons.Default.Verified,
+                                            contentDescription = "",
+                                            tint = Color.White,
+                                        )
+                                    }
                                 }
-                            },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 5.dp, vertical = 10.dp),
+                            } else {
+                                Button(
+                                    onClick = {
+                                        if (is_user_login) {
+                                            if (course.price == 0) {
+                                                //take a free course
+                                                courseRequestVolley.TakeFreeCourse(course_id) { message ->
+                                                    Toast.makeText(
+                                                        m_context,
+                                                        message,
+                                                        Toast.LENGTH_LONG
+                                                    ).show()
+                                                    navController.popBackStack()
+                                                    navController.navigate("course/$course_id")
+                                                }
+                                            } else {
+                                                navController.navigate("course/check-out/$course_id")
+                                            }
+                                        } else {
+                                            Toast.makeText(
+                                                m_context,
+                                                "لطفا اول وارد حساب کاربری خود شوید.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
+                                        }
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 5.dp, vertical = 10.dp),
 
-                            ) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                                horizontalArrangement = Arrangement.SpaceBetween
-                            ) {
-                                Box(modifier = Modifier.width(10.dp))
-                                Text(
-                                    text = "شرکت در دوره", modifier = Modifier
-                                        .padding(5.dp)
-                                        .scale(1.5f)
-                                )
-                                Icon(
-                                    imageVector = Icons.Default.AddShoppingCart,
-                                    contentDescription = "",
-                                    tint = Color.White,
-                                )
+                                    ) {
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Box(modifier = Modifier.width(10.dp))
+                                        Text(
+                                            text = "شرکت در دوره", modifier = Modifier
+                                                .padding(5.dp)
+                                                .scale(1.5f)
+                                        )
+                                        Icon(
+                                            imageVector = Icons.Default.AddShoppingCart,
+                                            contentDescription = "",
+                                            tint = Color.White,
+                                        )
+                                    }
+                                }
                             }
+                            //end else
+
                         }
 
                     }
@@ -337,13 +431,23 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                                         )
 
                                         Text(text = video.title)
-                                        Icon(
-                                            imageVector = Icons.Default.Lock,
-                                            contentDescription = "",
-                                            modifier = Modifier
-                                                .padding(15.dp),
-                                            tint = Color.Red
-                                        )
+                                        if(courseTake) {
+                                            Icon(
+                                                imageVector = Icons.Default.Verified,
+                                                contentDescription = "",
+                                                modifier = Modifier
+                                                    .padding(15.dp),
+                                                tint = Color.Green
+                                            )
+                                        }else{
+                                            Icon(
+                                                imageVector = Icons.Default.Lock,
+                                                contentDescription = "",
+                                                modifier = Modifier
+                                                    .padding(15.dp),
+                                                tint = Color.Red
+                                            )
+                                        }
 
                                     }
                                 }
@@ -364,11 +468,39 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                                 .fillMaxWidth()
                                 .bottomBorder(1.dp, Color.Gray), fontSize = 20.sp
                         )
-                        Text(
-                            text = course.description,
-                            modifier = Modifier.padding(5.dp),
-                            color = Color.DarkGray
-                        )
+                        
+                        if(courseComment4!=null){
+                            Spacer(modifier = Modifier.height(20.dp))
+                            LazyRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(), content = {
+                                    items(courseComment4!!) { course ->
+                                        
+                                        Spacer(modifier = Modifier.width(5.dp))
+                                        //card her
+                                        courseCardShowComment(comment = course.comment+" ...", username =course.user.name)
+                                        Spacer(modifier = Modifier.width(5.dp))
+                                        
+                                    }
+                                    item {
+                                        courseCardShowMoreComponent(
+                                            "نمایش دیدگاه های بیشتر",
+                                            modifierCard = Modifier.height(120.dp)
+                                            ,onClick = {
+                                            navController.navigate("course/$course_id/comments")
+                                        })
+                                        Spacer(modifier = Modifier.width(15.dp))
+                                    }
+                                })
+                        }else{
+                            LinerLoaderComponent()
+                        }
+                        
+                        
+                        
+                        
+                        //comments
                     }
 
                     Spacer(modifier = Modifier.height(10.dp))
@@ -384,11 +516,40 @@ fun showCourseScreen(navController: NavController, course_id: String) {
                                 .fillMaxWidth()
                                 .bottomBorder(1.dp, Color.Gray), fontSize = 20.sp
                         )
-                        Text(
-                            text = course.description,
-                            modifier = Modifier.padding(5.dp),
-                            color = Color.DarkGray
-                        )
+                        if(moreCourse!=null){
+                            Spacer(modifier = Modifier.height(20.dp))
+                            LazyRow(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .fillMaxHeight(), content = {
+                                    items(moreCourse!!) { course ->
+
+                                        Spacer(modifier = Modifier.width(5.dp))
+                                        //card her
+                                        courseCardShowComponent(
+                                            course.thumbnail,
+                                            course.nameTitle,
+                                            course.subCourseCategories.name,
+                                            course.user.name,
+                                            course.price.toString(),
+                                            {
+                                                //on Click
+                                                navController.navigate("course/${course.id}")
+                                            })
+                                        Spacer(modifier = Modifier.width(5.dp))
+
+                                    }
+                                    item {
+                                        courseCardShowMoreComponent(onClick = {
+                                            navController.popBackStack()
+                                            navController.navigate("home")
+                                        })
+                                        Spacer(modifier = Modifier.width(15.dp))
+                                    }
+                                })
+                        }else{
+                            LinerLoaderComponent()
+                        }
                     }
 
                     //scroll down

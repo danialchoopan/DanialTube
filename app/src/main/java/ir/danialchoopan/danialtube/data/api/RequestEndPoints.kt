@@ -36,7 +36,8 @@ object RequestEndPoints {
     val homePage = "$rootDomainApi/homeWithNoAuth"
     val homePageMoreBestSelling = "$rootDomainApi/homeWithNoAuth/showMoreBestselling"
     val homePageMoreMostPopulars = "$rootDomainApi/homeWithNoAuth/showMoreMostPopulars"
-
+    //show more course
+    val showMoreCourse = "$rootDomainApi/course/more"
 
     //course
     val showCourseById = "$rootDomainApi/course/show"
@@ -55,9 +56,20 @@ object RequestEndPoints {
     val myCourse =
         "$rootDomainApi/user/profile/course/transaction"
 
-    val checkCourseFavorite="$rootDomainApi/user/check/course/favorite"; //arg course_id POST
+    //take a course
+    val takeACourse =
+        "$rootDomainApi/user/take/course" //arg id course POST
+    val checkCourseToken = "$rootDomainApi/user/check/take/course"; //arg course_id POST
+
+    //course favorite add remove check for show course
+    val checkCourseFavorite = "$rootDomainApi/user/check/course/favorite"; //arg course_id POST
     val addCourseFavorite = "$rootDomainApi/user/add/course/favorite" // arg course_id POST
     val removeCourseFavorite = "$rootDomainApi/user/remove/course/favorite"// arg course_id POST
 
+    //course comment
+    val all4Comment="$rootDomainApi/course/comments/4" //arg course_id POST
+    val allComments="$rootDomainApi/course/comments" //arg course_id POST
+    val addComment="$rootDomainApi/course/add/comments" //arg course_id POST
+    val removeComment="$rootDomainApi/course/delete/comments" //arg comment id  POST
 
 }
