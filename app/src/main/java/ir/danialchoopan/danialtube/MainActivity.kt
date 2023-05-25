@@ -33,9 +33,11 @@ import ir.danialchoopan.danialtube.screen.category.ShowAllCourseSubCategoryScree
 import ir.danialchoopan.danialtube.screen.category.ShowAllSubCategoryScreen
 import ir.danialchoopan.danialtube.screen.category.homePageCategory.homePageCategoryScreen
 import ir.danialchoopan.danialtube.screen.course.`check-out`.CourseCheckOutScreen
+import ir.danialchoopan.danialtube.screen.course.comments.CourseCommentScreen
 import ir.danialchoopan.danialtube.screen.course.myCoursesScreen
 import ir.danialchoopan.danialtube.screen.course.myFavouriteCoursesScreen
 import ir.danialchoopan.danialtube.screen.course.showCourseScreen
+import ir.danialchoopan.danialtube.screen.course.videos.ShowVideosScreen
 import ir.danialchoopan.danialtube.screen.homePage.courseMore.bestSellingCourseScreen
 import ir.danialchoopan.danialtube.screen.homePage.courseMore.morePoplarCourseScreen
 import ir.danialchoopan.danialtube.screen.privacy.PrivacyUsersScreen
@@ -73,6 +75,19 @@ class MainActivity : ComponentActivity() {
                         composable("course/{courseId}") { navBackStackEntry ->
                             val courseId = navBackStackEntry.arguments!!.getString("courseId")
                             showCourseScreen(navController, course_id = courseId.toString())
+                        }
+                        //video
+                        composable("course/{course_id}/video/{video_id}") { navBackStackEntry ->
+                            val course_id = navBackStackEntry.arguments!!.getString("course_id").toString()
+                            val video_id = navBackStackEntry.arguments!!.getString("video_id").toString()
+                            ShowVideosScreen(navController,course_id,video_id)
+                        }
+
+
+                        //comments
+                        composable("course/{course_id}/comments") { navBackStackEntry ->
+                            val course_id = navBackStackEntry.arguments!!.getString("course_id").toString()
+                            CourseCommentScreen(navController,course_id)
                         }
 
                         composable("course/check-out/{course_id}"){navBackStackEntry ->

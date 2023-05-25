@@ -441,14 +441,6 @@ class CourseRequest(val m_context: Context) {
                     it.printStackTrace()
                 }) {
 
-                override fun getHeaders(): MutableMap<String, String> {
-                    val requestHeaders = HashMap<String, String>()
-                    val token_access = userSharedPreferences.getString("token", "")
-                    requestHeaders["Authorization"] = "Bearer $token_access";
-                    return requestHeaders
-
-                }
-
                 override fun getParams(): MutableMap<String, String> {
                     val m_params = HashMap<String, String>()
                     return m_params
@@ -471,14 +463,6 @@ class CourseRequest(val m_context: Context) {
                     it.printStackTrace()
                 }) {
 
-                override fun getHeaders(): MutableMap<String, String> {
-                    val requestHeaders = HashMap<String, String>()
-                    val token_access = userSharedPreferences.getString("token", "")
-                    requestHeaders["Authorization"] = "Bearer $token_access";
-                    return requestHeaders
-
-                }
-
                 override fun getParams(): MutableMap<String, String> {
                     val m_params = HashMap<String, String>()
                     return m_params
@@ -487,12 +471,12 @@ class CourseRequest(val m_context: Context) {
         VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
     }
 
-    fun addCourseComment(comment:String,course_id: String) {
+    fun addCourseComment(comment:String,course_id: String,done: () -> Unit) {
         val str_request =
             object : StringRequest(
                 Method.POST, RequestEndPoints.addComment + "/$course_id",
                 { strResponse ->
-
+                    done()
                 }
                 //error
                 , {
@@ -516,12 +500,12 @@ class CourseRequest(val m_context: Context) {
         VolleySingleTon.getInstance(m_context).addToRequestQueue(str_request)
     }
 
-    fun removeCourseComment(comment_id: String) {
+    fun removeCourseComment(comment_id: String,done:()->Unit) {
         val str_request =
             object : StringRequest(
                 Method.POST, RequestEndPoints.removeComment + "/$comment_id",
                 { strResponse ->
-
+                    done()
                 }
                 //error
                 , {

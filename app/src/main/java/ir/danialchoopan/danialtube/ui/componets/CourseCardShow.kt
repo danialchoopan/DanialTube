@@ -362,4 +362,53 @@ fun courseCardShowMoreComponent(
     }
 }
 
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterialApi::class)
+@Composable
+fun VidoesCardShowListComponent(
+    thumbnail: String,
+    nameTitle: String,
+    onClick: () -> Unit,
+    modifierCard: Modifier = Modifier,
+) {
+    Card(
+        elevation = 2.dp, modifier = modifierCard
+            .fillMaxWidth()
+            .padding(5.dp),
+        onClick = {
+            onClick()
+        }
+    ) {
+
+        Row(
+            Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            GlideImage(
+                model = LoadImageFormURLFixutils(
+                    thumbnail
+                ),
+                contentScale = ContentScale.Fit,
+                contentDescription = "",
+                modifier = Modifier
+                    .width(150.dp)
+                    .fillMaxHeight()
+            )
+
+            Column(modifier = Modifier.padding(15.dp)) {
+
+                Text(
+                    text = nameTitle,
+                    color = Color.DarkGray,
+                    fontSize = 16.sp
+                )
+                Spacer(modifier = Modifier.height(5.dp))
+
+
+            }
+        }
+    }
+}
+
 

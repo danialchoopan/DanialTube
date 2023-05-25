@@ -2,6 +2,7 @@ package ir.danialchoopan.danialtube.screen
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.ActivityInfo
 import android.graphics.drawable.Icon
 import android.util.Log
 import android.widget.Toast
@@ -29,8 +30,10 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun HomePageScreen(navController: NavController) {
-    val homeScreenViewModel: HomeScreenViewModel = viewModel()
     val m_context = LocalContext.current
+    val m_activity =m_context as Activity
+    m_activity.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    val homeScreenViewModel: HomeScreenViewModel = viewModel()
     val scaffoldState =
         rememberScaffoldState(rememberDrawerState(initialValue = DrawerValue.Closed))
     val coroutin1 = rememberCoroutineScope()

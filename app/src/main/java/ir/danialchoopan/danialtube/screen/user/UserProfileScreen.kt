@@ -170,7 +170,7 @@ fun UserProfileScreen(
                     Text(text = "دوره های شرکت شده")
 
                     Text(text = "بیشتر ...", color = Color.Blue, modifier = Modifier.clickable {
-                        navController.navigate("myFavouriteCourses")
+                        navController.navigate("myCourses")
                     })
 
 
