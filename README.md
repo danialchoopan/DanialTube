@@ -1,3 +1,12 @@
+<p align="center">
+
+<img src="pic/danialtub.png" width="200">
+
+</p>
+<p align="center">
+<img src="https://poser.pugx.org/laravel/framework/license.svg" alt="License">
+</p>
+
 
 # DanialKala
 
@@ -17,4 +26,14 @@ object RequestEndPoints {
 ```
 build the app and done!
 ### Screenshot
-i will upload them later :-)
+<img src="/pic/s-1.png" height="500">
+<img src="/pic/s-2.png" height="500">
+<br>
+<img src="/pic/s-3.png" height="500">
+<img src="/pic/s-4.png" height="500">
+<br>
+<img src="/pic/s-5.png" height="500">
+<img src="/pic/s-6.png" height="500">
+<br>
+<img src="/pic/s-7.png" height="500">
+
